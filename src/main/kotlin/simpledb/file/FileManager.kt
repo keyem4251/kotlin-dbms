@@ -5,6 +5,16 @@ import java.io.IOException
 import java.io.RandomAccessFile
 import java.lang.RuntimeException
 
+/**
+ * OSのファイルシステムを操作するクラス
+ * システムが立ち上がる（SimpleDBクラス）際に1つ作成される
+ *
+ * @property dbDirectory データベースのファイルを保存しているFileクラス
+ * @property blockSize 各ブロックのサイズ
+ * @property isNew データベースが作成されているかのフラグ
+ * @property openFiles 開いているファイル
+ */
+
 class FileManager(
     val dbDirectory: File,
     val blockSize: Int,
@@ -12,6 +22,9 @@ class FileManager(
     var isNew: Boolean = !dbDirectory.exists()
     lateinit var openFiles: MutableMap<String, RandomAccessFile>
 
+    /**
+     * 初期化処理
+     */
     init {
         // create the directory if the database is new
         if (isNew) {
@@ -29,6 +42,9 @@ class FileManager(
         }
     }
 
+    /**
+     * 指定されたブロック[blockId]の内容を指定したページ[page]に読み込む
+     */
     @Synchronized
     fun read(blockId: BlockId, page: Page) {
         try {
@@ -40,6 +56,9 @@ class FileManager(
         }
     }
 
+    /**
+     * 指定されたブロック[blockId]に指定したページ[page]の内容を書き込む
+     */
     @Synchronized
     fun write(blockId: BlockId, page: Page) {
         try {
@@ -51,6 +70,10 @@ class FileManager(
         }
     }
 
+    /**
+     * 指定されたファイル[filename]の末尾に空のバイト配列を書き込み、ファイルを拡張する
+     * @return 拡張したブロック
+     */
     @Synchronized
     fun append(filename: String): BlockId {
         val newBlockNumber = filename.length
@@ -66,6 +89,10 @@ class FileManager(
         return blockId
     }
 
+    /**
+     * 指定したファイル[filename]のブロックの数を返す
+     * @return ブロックの数
+     */
     fun length(filename: String): Int {
         try {
             val f = getFile(filename)
@@ -75,6 +102,10 @@ class FileManager(
         }
     }
 
+    /**
+     * 指定したファイル[filename]を取得する
+     * @return RandomAccessFileオブジェクト
+     */
     private fun getFile(filename: String): RandomAccessFile {
         var f = openFiles[filename]
         if (f == null) {
