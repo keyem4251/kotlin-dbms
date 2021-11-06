@@ -29,20 +29,24 @@ class Page {
     }
 
     /**
-     * get an Integer from [offset] int the page by calling the ByteBuffer
-     * @return Integer value in the page
+     * Page内の[offset]で指定した場所の数値を返す
+     * @return Page 内の数値
      */
     fun getInt(offset: Int): Int {
         return bb.getInt(offset)
     }
 
     /**
-     * save an Int [n] to [offset] in the page by calling the ByteBuffer
+     * Page内の[offset]で指定した場所に数値[n]を保存する
      */
     fun setInt(offset: Int, n: Int) {
         bb.putInt(offset, n)
     }
 
+    /**
+     * Page内の[offset]で指定した場所のバイナリを返す
+     * @return Page 内のバイナリ
+     */
     fun getBytes(offset: Int): ByteArray {
         bb.position(offset)
         val length = bb.int
@@ -51,27 +55,45 @@ class Page {
         return b
     }
 
+    /**
+     * Page内の[offset]で指定した場所にバイナリ[b]を保存する
+     */
     fun setBytes(offset: Int, b: ByteArray) {
         bb.position(offset)
         bb.putInt(b.size)
         bb.put(b)
     }
 
+    /**
+     * Page内の[offset]で指定した場所の文字列を返す
+     * @return Page 内の文字列
+     */
     fun getString(offset: Int): String {
         val b = getBytes(offset)
         return String(b, charset)
     }
 
+    /**
+     * Page内の[offset]で指定した場所に文字列[s]を保存する
+     */
     fun setString(offset: Int, s: String) {
         val b = s.toByteArray(charset)
         setBytes(offset, b)
     }
 
+    /**
+     * 文字列のサイズ[strSize]を受け取りバイナリとしての長さを返す
+     * @return 数値
+     */
     fun maxLength(strSize: Int): Int {
         val bytesPerChar = charset.newEncoder().maxBytesPerChar()
         return Integer.BYTES + (strSize * (bytesPerChar.toInt()))
     }
 
+    /**
+     * FileManagerから利用され、Pageの内容を返す
+     * @return ByteBuffer
+     */
     fun contents(): ByteBuffer {
         bb.position(0)
         return bb
