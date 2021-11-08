@@ -8,6 +8,7 @@ import java.lang.RuntimeException
 /**
  * OSのファイルシステムを操作するクラス
  * システムが立ち上がる（SimpleDBクラス）際に1つ作成される
+ * 特定の値を含むブロックをメモリ上のページに読み書きする
  *
  * @property dbDirectory データベースのファイルを保存しているFileクラス
  * @property blockSize 各ブロックのサイズ
