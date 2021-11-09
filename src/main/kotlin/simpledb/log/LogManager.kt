@@ -3,7 +3,6 @@ package simpledb.log
 import simpledb.file.BlockId
 import simpledb.file.FileManager
 import simpledb.file.Page
-import kotlin.math.log
 
 /**
  * システムの最初に作成される
