@@ -32,29 +32,31 @@ class BufferManager(
         }
     }
 
-    @Synchronized
     fun unpin(buffer: Buffer) {
-        buffer.unpin()
-        if (!buffer.isPinned()) {
-            numAvailable++
-            lock.notifyAll()
+        synchronized(lock) {
+            buffer.unpin()
+            if (!buffer.isPinned()) {
+                numAvailable++
+                lock.notifyAll()
+            }
         }
     }
 
-    @Synchronized
     fun pin(blockId: BlockId): Buffer {
-        try {
-            val timestamp = System.currentTimeMillis()
-            val buffer = tryToPin(blockId)
-            while (buffer == null && !waitingTooLong(timestamp)) {
-                lock.wait(MAX_TIME)
+        synchronized(lock) {
+            try {
+                val timestamp = System.currentTimeMillis()
                 val buffer = tryToPin(blockId)
-            }
-            if (buffer == null) throw BufferAbortException()
+                while (buffer == null && !waitingTooLong(timestamp)) {
+                    lock.wait(MAX_TIME)
+                    val buffer = tryToPin(blockId)
+                }
+                if (buffer == null) throw BufferAbortException()
 
-            return buffer
-        } catch (e: InterruptedException) {
-            throw BufferAbortException()
+                return buffer
+            } catch (e: InterruptedException) {
+                throw BufferAbortException()
+            }
         }
     }
 
