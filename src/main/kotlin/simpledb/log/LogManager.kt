@@ -84,8 +84,9 @@ class LogManager(
     }
 
     /**
-     *
-     * @return 
+     * 空のページをログファイルに追加する。
+     * ログフィアルに新しい領域を追加する。
+     * @return 新しい領域のBlockId
      */
     private fun appendNewBlock(): BlockId {
         val block = fm.append(logFile)
@@ -94,6 +95,10 @@ class LogManager(
         return block
     }
 
+    /**
+     * ログページの内容を現在のブロックに書き込み
+     * 最後に保存したログレコードの識別子を、最新の識別子に更新する
+     */
     private fun flush() {
         fm.write(currentBlock, logPage)
         lastSavedLSN = latestLSN
