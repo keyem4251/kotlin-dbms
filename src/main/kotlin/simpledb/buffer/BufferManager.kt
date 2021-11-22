@@ -4,6 +4,17 @@ import simpledb.file.BlockId
 import simpledb.file.FileManager
 import simpledb.log.LogManager
 
+/**
+ * システムの起動時1つ作成される
+ *
+ * @property fm FileManagerクラス
+ * @property lm LogManagerクラス
+ * @property numBuffers バッファプールのサイズ
+ * @property bufferPool 管理しているバッファ
+ * @property numAvailable 空いているBufferの数
+ * @property MAX_TIME
+ * @property lock
+ */
 class BufferManager(
     val fm: FileManager,
     val lm: LogManager,
@@ -20,11 +31,17 @@ class BufferManager(
         }
     }
 
+    /**
+     * @return 空いているBufferの数を返す
+     */
     @Synchronized
     fun available(): Int {
         return numAvailable
     }
 
+    /**
+     * Bufferの内容をディスクに書き出す
+     */
     @Synchronized
     fun flushAll(txnum: Int) {
         for (buffer in bufferPool) {
@@ -32,6 +49,9 @@ class BufferManager(
         }
     }
 
+    /**
+     * 指定したBufferからPageを開放する
+     */
     fun unpin(buffer: Buffer) {
         synchronized(lock) {
             buffer.unpin()
@@ -42,6 +62,10 @@ class BufferManager(
         }
     }
 
+    /**
+     * 特定のブロックの内容を含んだページとBufferを結びつける（BufferがPageを持つ）
+     * @return バッファオブジェクト
+     */
     fun pin(blockId: BlockId): Buffer {
         synchronized(lock) {
             try {
