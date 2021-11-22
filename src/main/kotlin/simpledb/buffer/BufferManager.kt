@@ -12,7 +12,7 @@ import simpledb.log.LogManager
  * @property numBuffers バッファプールのサイズ
  * @property bufferPool 管理しているバッファ
  * @property numAvailable 空いているBufferの数
- * @property MAX_TIME
+ * @property MAX_TIME バッファの空きを探す時間
  * @property lock
  */
 class BufferManager(
@@ -56,6 +56,7 @@ class BufferManager(
         synchronized(lock) {
             buffer.unpin()
             if (!buffer.isPinned()) {
+                // bufferが使用できる場合は使用できる数（numAvailable）を増やし、スレッドを開放
                 numAvailable++
                 lock.notifyAll()
             }
@@ -72,6 +73,9 @@ class BufferManager(
                 val timestamp = System.currentTimeMillis()
                 val buffer = tryToPin(blockId)
                 while (buffer == null && !waitingTooLong(timestamp)) {
+                    // 使用できるバッファがない場合スレッドを待機させる
+                    // 他のスレッドがバッファの使用をやめ、unpinを実行しnotifyAllを呼んだ場合
+                    // MAX_TIMEの時間まで待った場合
                     lock.wait(MAX_TIME)
                     val buffer = tryToPin(blockId)
                 }
@@ -88,6 +92,14 @@ class BufferManager(
         return System.currentTimeMillis() - starttime > MAX_TIME
     }
 
+    /**
+     * 指定されたディスク[blockId]にfindExistingBufferを使ってすでにバッファが割り当てられているか確認
+     * 割り当てられてなければchooseUnpinnedBufferを呼び、使用されていないバッファを探す
+     * 使用されてないバッファがあれば、バッファにすでに割り当てられているPageをディスクに書き込み、
+     * 指定した[blockId]をバッファに割り当てる
+     * 使用できるバッファがなければnullを返す
+     * @return 使用できるバッファ、ない場合はnull
+     */
     private fun tryToPin(blockId: BlockId): Buffer? {
         var buffer = findExistingBuffer(blockId)
         if (buffer == null) {
@@ -95,11 +107,17 @@ class BufferManager(
             if (buffer == null) return null
             buffer.assignToBlock(blockId)
         }
+        // 指定された[blockId]が割り当てられているバッファが現在使用されてなければ
+        // 使用できる数を減らす（isPinnedがfalseなので現在はnumAvailableに含まれているがpinするので、今後は使用できる数に含まれない）
         if (!buffer.isPinned()) numAvailable--
         buffer.pin()
         return buffer
     }
 
+    /**
+     * 指定されたディスク[blockId]がバッファにすでに割り当てられていればバッファを返す
+     * @return 割り当てられているバッファ
+     */
     private fun findExistingBuffer(blockId: BlockId): Buffer? {
         for (buffer in bufferPool) {
             val bId = buffer.blockId()
@@ -110,6 +128,10 @@ class BufferManager(
         return null
     }
 
+    /**
+     * 使用されていないバッファを返す
+     * @return 使用されていないバッファ
+     */
     private fun chooseUnpinnedBuffer(): Buffer? {
         for (buffer in bufferPool) {
             if (!buffer.isPinned()) return buffer

@@ -30,6 +30,14 @@ class Buffer(
     private var txnum = -1
     private var lsn = -1
 
+    fun contents(): Page {
+        return contents
+    }
+
+    fun blockId(): BlockId {
+        return blockId
+    }
+
     /**
      * クライアントが現在のPageを修正した場合は適切なログレコードの生成とともにsetModifiedが呼ばれる
      * [newTxnum]修正中のtransactionを識別する数値と生成したログレコードの識別子を受け取る
