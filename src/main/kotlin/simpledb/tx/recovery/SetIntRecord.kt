@@ -4,11 +4,11 @@ import simpledb.file.BlockId
 import simpledb.file.Page
 import simpledb.log.LogManager
 
-class SetStringRecord(val page: Page): LogRecord {
+class SetIntRecord(val page: Page): LogRecord {
     private var transactionNumber: Int
     private var offset: Int
-    private var value: String
-    private var blockId: BlockId
+    private var value: Int
+    private lateinit var blockId: BlockId
 
     init {
         val transactionPosition = Integer.BYTES
@@ -21,11 +21,11 @@ class SetStringRecord(val page: Page): LogRecord {
         val offsetPosition = blockPosition + Integer.BYTES
         offset = page.getInt(offsetPosition)
         val valuePosition = offsetPosition + Integer.BYTES
-        value = page.getString(valuePosition)
+        value = page.getInt(valuePosition)
     }
 
     override fun op(): Int {
-        return Operator.SETSTRING.id
+        return Operator.SETINT.id
     }
 
     override fun txNumber(): Int {
@@ -33,31 +33,30 @@ class SetStringRecord(val page: Page): LogRecord {
     }
 
     override fun toString(): String {
-        return "<SETSTRING $transactionNumber $blockId $offset $value>"
+        return "<SETINT $transactionNumber $blockId $offset $value>"
     }
 
     override fun undo(transaction: Transaction) {
         transaction.pin(blockId)
-        transaction.setString(blockId, offset, value, false) // don't log the undo
+        transaction.setInt(blockId, offset, value, false) // don't log the undo
         transaction.unpin(blockId)
     }
 
     companion object {
-        fun writeToLog(logManager: LogManager, txNum: Int, blk: BlockId, offset: Int, value: String): Int {
+        fun writeToLog(logManager: LogManager, transactionNumber: Int, blockId: BlockId, offset: Int, value: Int): Int {
             val transactionPosition = Integer.BYTES
             val filePosition = transactionPosition + Integer.BYTES
-            val blockPosition = filePosition + Page.maxLength(blk.filename.length)
+            val blockPosition = filePosition + Page.maxLength(blockId.filename.length)
             val offsetPosition = blockPosition + Integer.BYTES
             val valuePosition = offsetPosition + Integer.BYTES
-            val recordLength = valuePosition + Page.maxLength(value.length)
-            val record = ByteArray(recordLength)
-            val p = Page(record)
-            p.setInt(0, Operator.SETSTRING.id)
-            p.setInt(transactionPosition, txNum)
-            p.setString(filePosition, blk.filename)
-            p.setInt(blockPosition, blk.number)
-            p.setInt(offsetPosition, offset)
-            p.setString(valuePosition, value)
+            val record = ByteArray(valuePosition + Integer.BYTES)
+            val page = Page(record)
+            page.setInt(0, Operator.SETINT.id)
+            page.setInt(transactionPosition, transactionNumber)
+            page.setString(filePosition, blockId.filename)
+            page.setInt(blockPosition, blockId.number)
+            page.setInt(offsetPosition, offset)
+            page.setInt(valuePosition, value)
             return logManager.append(record)
         }
     }

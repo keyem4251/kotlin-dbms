@@ -4,6 +4,8 @@ import java.nio.ByteBuffer
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 
+val CHARSET = StandardCharsets.US_ASCII
+
 /**
  * Disk blockに保存されている内容（値）を保持するクラス
  *
@@ -17,7 +19,6 @@ import java.nio.charset.StandardCharsets
  * Kotlin(Java)のバイト型配列からPageを作成する。
  */
 class Page {
-    val charset: Charset = StandardCharsets.US_ASCII
     private var bb: ByteBuffer
 
     constructor(blockSize: Int) {
@@ -70,14 +71,14 @@ class Page {
      */
     fun getString(offset: Int): String {
         val b = getBytes(offset)
-        return String(b, charset)
+        return String(b, CHARSET)
     }
 
     /**
      * Page内の[offset]で指定した場所に文字列[s]を保存する
      */
     fun setString(offset: Int, s: String) {
-        val b = s.toByteArray(charset)
+        val b = s.toByteArray(CHARSET)
         setBytes(offset, b)
     }
 
@@ -85,9 +86,11 @@ class Page {
      * 文字列のサイズ[strSize]を受け取りバイナリとしての長さを返す
      * @return 数値
      */
-    fun maxLength(strSize: Int): Int {
-        val bytesPerChar = charset.newEncoder().maxBytesPerChar()
-        return Integer.BYTES + (strSize * (bytesPerChar.toInt()))
+    companion object {
+        fun maxLength(strSize: Int): Int {
+            val bytesPerChar = CHARSET.newEncoder().maxBytesPerChar()
+            return Integer.BYTES + (strSize * (bytesPerChar.toInt()))
+        }
     }
 
     /**

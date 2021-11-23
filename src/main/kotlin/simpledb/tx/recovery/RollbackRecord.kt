@@ -3,7 +3,7 @@ package simpledb.tx.recovery
 import simpledb.file.Page
 import simpledb.log.LogManager
 
-class StartRecord(val page: Page): LogRecord {
+class RollbackRecord(private val page: Page): LogRecord {
     private var transactionNumber: Int
 
     init {
@@ -12,7 +12,7 @@ class StartRecord(val page: Page): LogRecord {
     }
 
     override fun op(): Int {
-        return Operator.START.id
+        return Operator.ROLLBACK.id
     }
 
     override fun txNumber(): Int {
@@ -22,14 +22,14 @@ class StartRecord(val page: Page): LogRecord {
     override fun undo(transaction: Transaction) {}
 
     override fun toString(): String {
-        return "<START $transactionNumber>"
+        return "<ROLLBACK $transactionNumber>"
     }
 
     companion object {
         fun writeToLog(logManager: LogManager, transactionNumber: Int): Int {
             val record = ByteArray(2 * Integer.BYTES)
             val page = Page(record)
-            page.setInt(0, Operator.START.id)
+            page.setInt(0, Operator.ROLLBACK.id)
             page.setInt(Integer.BYTES, transactionNumber)
             return logManager.append(record)
         }
