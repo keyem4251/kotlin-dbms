@@ -15,7 +15,7 @@ class LockTable {
                 if (hasXLock(blockId)) throw LockAbortException()
 
                 val lockValue = getLockValue(blockId) // will not be negative
-                locks.put(blockId, lockValue + 1)
+                locks[blockId] = lockValue + 1
             } catch (e: InterruptedException) {
                 throw LockAbortException()
             }
@@ -29,7 +29,7 @@ class LockTable {
                 while (hasOtherSLocks(blockId) && !waitingTooLong(timestamp)) lock.wait(maxTime)
                 if (hasOtherSLocks(blockId)) throw LockAbortException()
 
-                locks.put(blockId, -1)
+                locks[blockId] = -1
             } catch (e: InterruptedException) {
                 throw LockAbortException()
             }
@@ -40,7 +40,7 @@ class LockTable {
         synchronized(lock) {
             val lockValue = getLockValue(blockId)
             if (lockValue > 1) {
-                locks.put(blockId, lockValue - 1)
+                locks[blockId] = lockValue - 1
             } else {
                 locks.remove(blockId)
                 lock.notifyAll()
