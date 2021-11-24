@@ -13,7 +13,6 @@ class Transaction(
     val bufferManager: BufferManager,
     val logManager: LogManager,
 ) {
-    private var nextTransactionNumber = 0
     private val enfOfFile = -1
     private lateinit var recoveryManager: RecoveryManager
     private lateinit var concurrencyManager: ConcurrencyManager
@@ -72,7 +71,48 @@ class Transaction(
         var lsn = -1
         if (okToLog) lsn = recoveryManager.setInt(buffer, offset)
         val page = buffer.contents()
+        page.setInt(offset, value)
+        buffer.setModified(transactionNumber, lsn)
+    }
+
+    fun setString(blockId: BlockId, offset: Int, value: String, okToLog: Boolean) {
+        concurrencyManager.xLock(blockId)
+        val buffer = myBuffers.getBuffer(blockId)
+        var lsn = -1
+        if (okToLog) lsn = recoveryManager.setString(buffer, offset)
+        val page = buffer.contents()
         page.setString(offset, value)
         buffer.setModified(transactionNumber, lsn)
+    }
+
+    fun size(filename: String): Int {
+        val dummyBlock = BlockId(filename, enfOfFile)
+        concurrencyManager.sLock(dummyBlock)
+        return fileManager.length(filename)
+    }
+
+    fun append(filename: String): BlockId {
+        val dummyBlock = BlockId(filename, enfOfFile)
+        concurrencyManager.xLock(dummyBlock)
+        return fileManager.append(filename)
+    }
+
+    fun blockSize(): Int {
+        return fileManager.blockSize
+    }
+
+    fun availableBuffers(): Int {
+        return bufferManager.available()
+    }
+
+    companion object {
+        var nextTransactionNumber = 0
+
+        @Synchronized
+        fun nextTransactionNumber(): Int {
+            this.nextTransactionNumber++
+            println("new transaction $nextTransactionNumber")
+            return nextTransactionNumber
+        }
     }
 }
