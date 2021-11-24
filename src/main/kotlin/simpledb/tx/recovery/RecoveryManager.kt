@@ -3,6 +3,7 @@ package simpledb.tx.recovery
 import simpledb.buffer.Buffer
 import simpledb.buffer.BufferManager
 import simpledb.log.LogManager
+import simpledb.tx.Transaction
 
 class RecoveryManager(
     private val transaction: Transaction,

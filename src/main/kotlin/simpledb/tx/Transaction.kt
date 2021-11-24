@@ -1,6 +1,5 @@
 package simpledb.tx
 
-import simpledb.buffer.Buffer
 import simpledb.buffer.BufferManager
 import simpledb.file.BlockId
 import simpledb.file.FileManager
@@ -53,15 +52,15 @@ class Transaction(
         myBuffers.unpin(blockId)
     }
 
-    fun getInt(blockId: BlockId, offset: Int): Int {
+    fun getInt(blockId: BlockId, offset: Int): Int? {
         concurrencyManager.sLock(blockId)
-        val buffer = myBuffers.getBuffer(blockId)
+        val buffer = myBuffers.getBuffer(blockId) ?: return null
         return buffer.contents().getInt(offset)
     }
 
-    fun getString(blockId: BlockId, offset: Int): String {
+    fun getString(blockId: BlockId, offset: Int): String? {
         concurrencyManager.sLock(blockId)
-        val buffer = myBuffers.getBuffer(blockId)
+        val buffer = myBuffers.getBuffer(blockId) ?: return null
         return buffer.contents().getString(offset)
     }
 
@@ -69,6 +68,7 @@ class Transaction(
         concurrencyManager.xLock(blockId)
         val buffer = myBuffers.getBuffer(blockId)
         var lsn = -1
+        if (buffer == null) return
         if (okToLog) lsn = recoveryManager.setInt(buffer, offset)
         val page = buffer.contents()
         page.setInt(offset, value)
@@ -79,6 +79,7 @@ class Transaction(
         concurrencyManager.xLock(blockId)
         val buffer = myBuffers.getBuffer(blockId)
         var lsn = -1
+        if (buffer == null) return
         if (okToLog) lsn = recoveryManager.setString(buffer, offset)
         val page = buffer.contents()
         page.setString(offset, value)

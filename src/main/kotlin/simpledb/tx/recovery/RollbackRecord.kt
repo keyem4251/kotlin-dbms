@@ -2,6 +2,7 @@ package simpledb.tx.recovery
 
 import simpledb.file.Page
 import simpledb.log.LogManager
+import simpledb.tx.Transaction
 
 class RollbackRecord(private val page: Page): LogRecord {
     private var transactionNumber: Int

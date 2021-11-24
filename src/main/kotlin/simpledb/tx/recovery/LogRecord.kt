@@ -1,6 +1,7 @@
 package simpledb.tx.recovery
 
 import simpledb.file.Page
+import simpledb.tx.Transaction
 
 enum class Operator(val id: Int) {
     CHECKPOINT(0),
@@ -20,12 +21,12 @@ interface LogRecord {
         fun createLogRecord(byteArray: ByteArray): LogRecord? {
             val p = Page(byteArray)
             when (p.getInt(0)) {
-                Operator.CHECKPOINT.id -> CheckPointRecord()
-                Operator.START.id -> StartRecord()
-                Operator.COMMIT.id -> CommitRecord()
-                Operator.ROLLBACK.id -> RollbackRecord()
-                Operator.SETINT.id -> SetIntRecord()
-                Operator.SETSTRING.id -> SetStringRecord()
+                Operator.CHECKPOINT.id -> CheckpointRecord()
+                Operator.START.id -> StartRecord(p)
+                Operator.COMMIT.id -> CommitRecord(p)
+                Operator.ROLLBACK.id -> RollbackRecord(p)
+                Operator.SETINT.id -> SetIntRecord(p)
+                Operator.SETSTRING.id -> SetStringRecord(p)
             }
             return null
         }
