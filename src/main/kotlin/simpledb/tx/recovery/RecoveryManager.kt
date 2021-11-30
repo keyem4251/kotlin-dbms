@@ -5,6 +5,11 @@ import simpledb.buffer.BufferManager
 import simpledb.log.LogManager
 import simpledb.tx.Transaction
 
+/**
+ * RecoverManagerはACID特性の原子性と耐久性を持つ
+ * コミットとロールバックの操作を使って実現する
+ *
+ */
 class RecoveryManager(
     private val transaction: Transaction,
     private val transactionNumber: Int,
