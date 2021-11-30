@@ -12,8 +12,22 @@ enum class Operator(val id: Int) {
     SETSTRING(5),
 }
 
+/**
+ * RecoveryManagerがTransactionの動きを記録するのに使用する。
+ * 以下の3つの場合にさくせされる
+ * Transactionが開始する際: start
+ * Transactionが完了する際: commit, rollback
+ * Transactionが値を修正する際: setint, setstring
+ */
 interface LogRecord {
+    /**
+     * レコードのタイプ（Operatorのid）
+     */
     fun op(): Int
+
+    /**
+     * TransactionのID
+     */
     fun txNumber(): Int
     fun undo(transaction: Transaction)
 

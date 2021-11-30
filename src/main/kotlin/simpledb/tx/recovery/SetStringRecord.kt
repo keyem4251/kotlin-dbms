@@ -5,6 +5,12 @@ import simpledb.file.Page
 import simpledb.log.LogManager
 import simpledb.tx.Transaction
 
+/**
+ * @property blockId: 変更されたファイルの名前とブロック番号
+ * @property offset: 変更が発生したオフセット
+ * @property value: 変更が発生したオフセットでの古い値
+ * 変更が発生したオフセットでの新しい値
+ */
 class SetStringRecord(val page: Page): LogRecord {
     private var transactionNumber: Int
     private var offset: Int
