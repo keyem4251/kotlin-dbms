@@ -7,6 +7,16 @@ import simpledb.log.LogManager
 import simpledb.tx.concurrency.ConcurrencyManager
 import simpledb.tx.recovery.RecoveryManager
 
+/**
+ * TransactionはRecoveryManager、ConcurrencyManagerからACID特性を実現するために使用される
+ * 3つの種類のメソッドに分けられる
+ * 1. life span: init（コンストラクタ）で作成、commit、rollbackで削除、recoverはコミットされてないTransactionをもとに戻す
+ * 2. access buffer: クライアントからbufferを隠す。pinでbufferを保存し、getIntでBlockIdへの参照をクライアントへ渡す。
+ *    setInt、setString、getStringも同じくクライアントからbufferを隠蔽する
+ * 3. related file manager: sizeでファイルマーカーの末尾を読む、appendはファイルマーカーの末尾を修正する。
+ *    競合を回避するためにConcurrencyManagerを呼ぶ。blockSizeはファイルマーカーのブロックサイズを取得するときに使用。
+ *
+ */
 class Transaction(
     val fileManager: FileManager,
     val bufferManager: BufferManager,
@@ -15,16 +25,18 @@ class Transaction(
     private val enfOfFile = -1
     private lateinit var recoveryManager: RecoveryManager
     private lateinit var concurrencyManager: ConcurrencyManager
-    private var transactionNumber: Int
+    private var transactionNumber: Int = nextTransactionNumber()
     private lateinit var myBuffers: BufferList
 
     init {
-        transactionNumber = nextTransactionNumber()
         val recoveryManager = RecoveryManager(this, transactionNumber, logManager, bufferManager)
         val concurrencyManager = ConcurrencyManager()
         myBuffers = BufferList(bufferManager)
     }
 
+    /**
+     * 自動的にトランザクションに結び付けられているbufferを開放する
+     */
     fun commit() {
         recoveryManager.commit()
         concurrencyManager.release()
@@ -32,6 +44,9 @@ class Transaction(
         println("transaction $transactionNumber committed")
     }
 
+    /**
+     * 自動的にトランザクションに結び付けられているbufferを開放する
+     */
     fun rollback() {
         recoveryManager.rollback()
         concurrencyManager.release()
