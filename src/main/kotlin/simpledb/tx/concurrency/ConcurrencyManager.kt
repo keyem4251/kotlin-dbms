@@ -2,6 +2,11 @@ package simpledb.tx.concurrency
 
 import simpledb.file.BlockId
 
+/**
+ * ConcurrencyManagerはACID特性の一貫性と独立性を持つ
+ * ロックの仕組みを使って実現する
+ *
+ */
 class ConcurrencyManager {
     private var lockTable = LockTable()
     private var locks = mutableMapOf<BlockId, String>()
