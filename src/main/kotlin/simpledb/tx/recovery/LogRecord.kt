@@ -26,11 +26,19 @@ interface LogRecord {
     fun op(): Int
 
     /**
-     * TransactionのID
+     * ログレコードに保存されているTransactionのID
      */
     fun txNumber(): Int
+
+    /**
+     * ログレコードでエンコードされた操作を元に戻す。
+     * SETINT, SETSTRINGの場合に動作をする。
+     */
     fun undo(transaction: Transaction)
 
+    /**
+     * Log IteratorによってreturnされたバイトからLogRecordを作成する
+     */
     companion object {
         fun createLogRecord(byteArray: ByteArray): LogRecord? {
             val p = Page(byteArray)
