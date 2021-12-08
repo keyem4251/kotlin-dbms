@@ -4,21 +4,34 @@ import simpledb.file.Page
 import simpledb.log.LogManager
 import simpledb.tx.Transaction
 
+/**
+ * Check Point Log Record
+ */
 class CheckpointRecord: LogRecord {
     override fun op(): Int {
         return Operator.CHECKPOINT.id
     }
 
+    /**
+     * Checkpoint recordsは関連付けられたトランザクションは持たないためダミーの値として-1を返す
+     */
     override fun txNumber(): Int {
         return -1 // dummy value
     }
 
+    /**
+     * Checkpoint recordsはやり直しを行う情報は持っていない
+     */
     override fun undo(transaction: Transaction) {}
 
     override fun toString(): String {
         return "<CHECKPOINT>"
     }
 
+    /**
+     * ログにCheckpoint recordを書くメソッド
+     * このログレコードはCHECKPOINT Operatorだけを含む
+     */
     companion object {
         fun writeToLog(logManager: LogManager): Int {
             val record = ByteArray(Integer.BYTES)
