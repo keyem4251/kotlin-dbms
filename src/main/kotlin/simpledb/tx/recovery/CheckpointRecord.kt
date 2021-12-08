@@ -31,6 +31,7 @@ class CheckpointRecord: LogRecord {
     /**
      * ログにCheckpoint recordを書くメソッド
      * このログレコードはCHECKPOINT Operatorだけを含む
+     * @return 末尾のログの識別子
      */
     companion object {
         fun writeToLog(logManager: LogManager): Int {
