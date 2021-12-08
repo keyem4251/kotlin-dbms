@@ -10,6 +10,9 @@ import simpledb.tx.Transaction
 class CommitRecord(private val page: Page): LogRecord {
     private val transactionNumber: Int
 
+    /**
+     * 特定のトランザクションのIDを設定する
+     */
     init {
         val transactionPosition = Integer.BYTES
         transactionNumber = page.getInt(transactionPosition)
@@ -35,6 +38,7 @@ class CommitRecord(private val page: Page): LogRecord {
     /**
      * ログにCommit recordを書くメソッド
      * このログレコードはCOMMIT Operatorの後にトランザクションIDが含まれている。
+     * @return 末尾のログの識別子
      */
     companion object {
         fun writeToLog(logManager: LogManager, transactionNumber: Int): Int {
