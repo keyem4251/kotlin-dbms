@@ -17,6 +17,9 @@ class SetStringRecord(val page: Page): LogRecord {
     private var value: String
     private var blockId: BlockId
 
+    /**
+     * 特定のトランザクションのIDを設定し、ログの値を含んだバイト配列（page）を元にログの内容を作成
+     */
     init {
         val transactionPosition = Integer.BYTES
         transactionNumber = page.getInt(transactionPosition)
@@ -43,12 +46,22 @@ class SetStringRecord(val page: Page): LogRecord {
         return "<SETSTRING $transactionNumber $blockId $offset $value>"
     }
 
+    /**
+     * 指定したトランザクションの内容をログレコードに保存されている値に置き換える。
+     * やり直しが発生したログの行（Stringをセットする）のブロックにトランザクション処理を固定し、
+     * setStringを呼び出し値を元に戻し、トランザクション処理を開放する。
+     */
     override fun undo(transaction: Transaction) {
         transaction.pin(blockId)
-        transaction.setString(blockId, offset, value, false) // don't log the undo
+        transaction.setString(blockId, offset, value, false) // undoの処理なのでログレコードは作成しない
         transaction.unpin(blockId)
     }
 
+    /**
+     * ログにsetString(文字列を設定するという動作)の行を書くメソッド
+     * このログレコードはSETSTRING Operatorの後にトランザクションID、
+     * ブロックのファイル名、修正されたブロックのオフセット（位置）、修正前のの文字列の値とそのオフセット（位置）が含まれている。
+     */
     companion object {
         fun writeToLog(logManager: LogManager, txNum: Int, blk: BlockId, offset: Int, value: String): Int {
             val transactionPosition = Integer.BYTES
