@@ -36,7 +36,7 @@ class RollbackRecord(private val page: Page): LogRecord {
     }
 
     /**
-     * ログにRollback recordを書くメソッド
+     * ログにRollback(ロールバックをするという動作)の行を書くメソッド
      * このログレコードはROLLBACK Operatorの後にトランザクションIDが含まれている。
      * @return 末尾のログの識別子
      */

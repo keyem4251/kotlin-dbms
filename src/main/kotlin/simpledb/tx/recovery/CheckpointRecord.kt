@@ -29,7 +29,7 @@ class CheckpointRecord: LogRecord {
     }
 
     /**
-     * ログにCheckpoint recordを書くメソッド
+     * ログにCheckpoint(チェックポイント)の行を書くメソッド
      * このログレコードはCHECKPOINT Operatorだけを含む
      * @return 末尾のログの識別子
      */

@@ -36,7 +36,7 @@ class CommitRecord(private val page: Page): LogRecord {
     }
 
     /**
-     * ログにCommit recordを書くメソッド
+     * ログにCommit(コミットを行うという動作)の行を書くメソッド
      * このログレコードはCOMMIT Operatorの後にトランザクションIDが含まれている。
      * @return 末尾のログの識別子
      */
