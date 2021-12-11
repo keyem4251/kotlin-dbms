@@ -8,7 +8,7 @@ import simpledb.tx.Transaction
 /**
  * RecoverManagerはACID特性の原子性と耐久性を持つ
  * コミットとロールバックの操作を使って実現する
- *
+ * 各トランザクションはそれぞれRecoverManagerを持つ
  */
 class RecoveryManager(
     private val transaction: Transaction,
@@ -16,16 +16,29 @@ class RecoveryManager(
     private val logManager: LogManager,
     private val bufferManager: BufferManager
 ) {
+    /**
+     * 特定のトランザクションに紐づくRecoverManagerを作成する
+     * トランザクションの処理が開始されるのでStartRecordを記録する
+     */
     init {
         StartRecord.writeToLog(logManager, transactionNumber)
     }
 
+    /**
+     * 関連付けられたトランザクションの識別子を元にトランザクションの内容をディスクに書き出す
+     * コミットの行をログに作成し、ログに書き出す
+     */
     fun commit() {
         bufferManager.flushAll(transactionNumber)
         val lsn = CommitRecord.writeToLog(logManager, transactionNumber)
         logManager.flush(lsn)
     }
 
+    /**
+     * doRollbackを実行し
+     * 関連付けられたトランザクションの識別子を元にトランザクションの内容をディスクに書き出す
+     * ロールバックの行をログに作成し、ログに書き出す
+     */
     fun rollback() {
         doRollback()
         bufferManager.flushAll(transactionNumber)
@@ -33,6 +46,11 @@ class RecoveryManager(
         logManager.flush(lsn)
     }
 
+    /**
+     * doRecoverを実行し
+     * ログから完了していないトランザクションの内容を回復させる
+     * チェックポイントの行をログに作成し、ログに書き出す
+     */
     fun recover() {
         doRecover()
         bufferManager.flushAll(transactionNumber)
@@ -40,18 +58,30 @@ class RecoveryManager(
         logManager.flush(lsn)
     }
 
+    /**
+     * 数値を設定する行を作成し、ログに書き出し、ログの識別子を返す
+     * ページを含む[buffer]を受け取り、ページの値の位置[offset]から元の値を取り出しログを作成
+     */
     fun setInt(buffer: Buffer, offset: Int): Int {
         val oldValue = buffer.contents().getInt(offset)
         val blockId = buffer.blockId()
         return SetIntRecord.writeToLog(logManager, transactionNumber, blockId, offset, oldValue)
     }
 
+    /**
+     * 文字列を設定する行を作成し、ログに書き出し、ログの識別子を返す
+     * ページを含む[buffer]を受け取り、ページの値の位置[offset]から元の値を取り出しログを作成
+     */
     fun setString(buffer: Buffer, offset: Int): Int {
         val oldValue = buffer.contents().getString(offset)
         val blockId = buffer.blockId()
         return SetStringRecord.writeToLog(logManager, transactionNumber, blockId, offset, oldValue)
     }
 
+    /**
+     * トランザクションをロールバックする
+     * ログのイテレータからトランザクションの開始の行（Operator.START）まで処理を戻す
+     */
     private fun doRollback() {
         val iterator = logManager.iterator()
         while (iterator.hasNext()) {
@@ -64,6 +94,11 @@ class RecoveryManager(
         }
     }
 
+    /**
+     * データベースの復旧を行う
+     * ログのイテレータから値を取り出し、未完了のトランザクションのログの行を見つける度にundo()を呼び出す
+     * CHECKPOINTまたはログの終わりまで行くと停止する
+     */
     private fun doRecover() {
         val finishedTransaction = mutableListOf<Int>()
         val iterator = logManager.iterator()
