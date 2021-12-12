@@ -4,6 +4,10 @@ import simpledb.buffer.Buffer
 import simpledb.buffer.BufferManager
 import simpledb.file.BlockId
 
+/**
+ * トランザクションで管理されてるバッファのリストクラス
+ * どのブロックにバッファが結びつけられてるか、どのブロックが何回関連付けられてるかを記録
+ */
 class BufferList(private val bufferManager: BufferManager) {
     private val buffers = mutableMapOf<BlockId, Buffer>()
     private val pins = mutableListOf<BlockId>()
@@ -27,6 +31,9 @@ class BufferList(private val bufferManager: BufferManager) {
         }
     }
 
+    /**
+     * トランザクションに結び付けられてるバッファを管理からすべて外す
+     */
     fun unpinAll() {
         for (blockId in pins) {
             val buffer = buffers[blockId]
