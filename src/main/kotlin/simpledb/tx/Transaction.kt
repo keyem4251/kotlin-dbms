@@ -103,7 +103,9 @@ class Transaction(
     }
 
     /**
-     * 排他ロックを獲得し、recoverManagerで値をセットしログをレコードに書き込む
+     * 指定のブロックの指定の位置に値を保存する
+     * ブロックの排他ロックを獲得後にブロックのバッファを取得し、
+     * recoverManagerで値をセットしログをレコードに書き込む
      * bufferの値を最新の値にセットし、トランザクションの識別子とろうの識別子をbufferにセットする
      */
     fun setInt(blockId: BlockId, offset: Int, value: Int, okToLog: Boolean) {
@@ -118,7 +120,9 @@ class Transaction(
     }
 
     /**
-     * 排他ロックを獲得し、recoverManagerで値をセットしログをレコードに書き込む
+     * 指定のブロックの指定の位置に値を保存する
+     * ブロックの排他ロックを獲得後にブロックのバッファを取得し、
+     * recoverManagerで値をセットしログをレコードに書き込む
      * bufferの値を最新の値にセットし、トランザクションの識別子とろうの識別子をbufferにセットする
      */
     fun setString(blockId: BlockId, offset: Int, value: String, okToLog: Boolean) {
