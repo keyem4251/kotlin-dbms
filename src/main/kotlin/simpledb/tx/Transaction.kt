@@ -15,7 +15,6 @@ import simpledb.tx.recovery.RecoveryManager
  *    setInt、setString、getStringも同じくクライアントからbufferを隠蔽する
  * 3. related file manager: sizeでファイルマーカーの末尾を読む、appendはファイルマーカーの末尾を修正する。
  *    競合を回避するためにConcurrencyManagerを呼ぶ。blockSizeはファイルマーカーのブロックサイズを取得するときに使用。
- *
  */
 class Transaction(
     val fileManager: FileManager,
@@ -28,6 +27,11 @@ class Transaction(
     private var transactionNumber: Int = nextTransactionNumber()
     private lateinit var myBuffers: BufferList
 
+    /**
+     * recover managerとconcurrency managerを関連付けてトランザクションを作成する
+     * このクラスの初期化はSimpleDBクラスから取得されるファイル、ログ、バッファーマネージャーに依存している
+     * ファイル、ログ、バッファーマネージャーのオブジェクトはシステムの初期化時に作成される
+     */
     init {
         val recoveryManager = RecoveryManager(this, transactionNumber, logManager, bufferManager)
         val concurrencyManager = ConcurrencyManager()
@@ -35,7 +39,8 @@ class Transaction(
     }
 
     /**
-     * 自動的にトランザクションに結び付けられているbufferを開放する
+     * トランザクションに結び付けられているbufferを開放する
+     * recover managerのコミットを呼び、concurrency managerのロックを開放する
      */
     fun commit() {
         recoveryManager.commit()
@@ -46,6 +51,7 @@ class Transaction(
 
     /**
      * 自動的にトランザクションに結び付けられているbufferを開放する
+     * recover managerのロールバックを呼び、concurrency managerのロックを開放する
      */
     fun rollback() {
         recoveryManager.rollback()
@@ -54,31 +60,52 @@ class Transaction(
         println("transaction $transactionNumber rolled back")
     }
 
+    /**
+     * 修正されたバッファを書き込みrecover managerのrecverを呼び復旧する
+     * ログを確認して、コミットされてないトランザクションをロールバックする
+     * このメソッドはトランザクションが開始される前のシステムの開始時に呼ばれる。
+     */
     fun  recover() {
         bufferManager.flushAll(transactionNumber)
         recoveryManager.recover()
     }
 
+    /**
+     * トランザクションがクライアントのためにバッファを管理する
+     */
     fun pin(blockId: BlockId) {
         myBuffers.pin(blockId)
     }
 
+    /**
+     * トランザクションはブロックに紐付けられた、バッファを管理からはずす
+     */
     fun unpin(blockId: BlockId) {
         myBuffers.unpin(blockId)
     }
 
+    /**
+     * 共有ロックを獲得し、指定したブロックの値を取得する
+     */
     fun getInt(blockId: BlockId, offset: Int): Int? {
         concurrencyManager.sLock(blockId)
         val buffer = myBuffers.getBuffer(blockId) ?: return null
         return buffer.contents().getInt(offset)
     }
 
+    /**
+     * 共有ロックを獲得し、指定したブロックの値を取得する
+     */
     fun getString(blockId: BlockId, offset: Int): String? {
         concurrencyManager.sLock(blockId)
         val buffer = myBuffers.getBuffer(blockId) ?: return null
         return buffer.contents().getString(offset)
     }
 
+    /**
+     * 排他ロックを獲得し、recoverManagerで値をセットしログをレコードに書き込む
+     * bufferの値を最新の値にセットし、トランザクションの識別子とろうの識別子をbufferにセットする
+     */
     fun setInt(blockId: BlockId, offset: Int, value: Int, okToLog: Boolean) {
         concurrencyManager.xLock(blockId)
         val buffer = myBuffers.getBuffer(blockId)
@@ -90,6 +117,10 @@ class Transaction(
         buffer.setModified(transactionNumber, lsn)
     }
 
+    /**
+     * 排他ロックを獲得し、recoverManagerで値をセットしログをレコードに書き込む
+     * bufferの値を最新の値にセットし、トランザクションの識別子とろうの識別子をbufferにセットする
+     */
     fun setString(blockId: BlockId, offset: Int, value: String, okToLog: Boolean) {
         concurrencyManager.xLock(blockId)
         val buffer = myBuffers.getBuffer(blockId)
@@ -101,12 +132,20 @@ class Transaction(
         buffer.setModified(transactionNumber, lsn)
     }
 
+    /**
+     * 共有ロックを獲得しファイルの末尾を-1の値としてダミーのブロックを作成し、ファイル名からファイルの長さを返す
+     * @return ファイルの長さ
+     */
     fun size(filename: String): Int {
         val dummyBlock = BlockId(filename, enfOfFile)
         concurrencyManager.sLock(dummyBlock)
         return fileManager.length(filename)
     }
 
+    /**
+     * 排他ロックを獲得しファイルの末尾を-1の値としてダミーのブロックを作成し、ファイルに新しいブロックを結びつける
+     * @return ファイルの長さ
+     */
     fun append(filename: String): BlockId {
         val dummyBlock = BlockId(filename, enfOfFile)
         concurrencyManager.xLock(dummyBlock)
