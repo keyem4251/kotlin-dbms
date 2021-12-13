@@ -23,6 +23,16 @@ class Schema {
         addField(folderName, type, length)
     }
 
+    fun addAll(schema: Schema) {
+        for (folderName in schema.fields) {
+            add(folderName, schema)
+        }
+    }
+
+    fun hasField(folderName: String): Boolean {
+        return fields.contains(folderName)
+    }
+
     fun type(folderName: String): Int? {
         return info[folderName]?.type
     }
