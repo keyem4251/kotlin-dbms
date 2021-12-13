@@ -1,7 +1,7 @@
 package simpledb.record
 
 class Schema {
-    private val fields = mutableListOf<String>()
+    val fields = mutableListOf<String>()
     private val info = mutableMapOf<String, FieldInfo>()
 
     fun addField(folderName: String, type: Int, length: Int) {
