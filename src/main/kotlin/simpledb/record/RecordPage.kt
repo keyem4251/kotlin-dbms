@@ -10,7 +10,7 @@ enum class RecordPageState(val id: Int) {
 
 class RecordPage(
     private val transaction: Transaction,
-    private val blockId: BlockId,
+    val blockId: BlockId,
     private val layout: Layout,
 ) {
     init {
@@ -71,10 +71,6 @@ class RecordPage(
         val newSlot = searchAfter(slot, RecordPageState.EMPTY.id)
         if (newSlot >= 0) setFlag(newSlot, RecordPageState.USED.id)
         return newSlot
-    }
-
-    fun blockId(): BlockId {
-        return blockId
     }
 
     private fun searchAfter(slot: Int, flag: Int): Int {
