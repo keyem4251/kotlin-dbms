@@ -1,10 +1,7 @@
 package simpledb.file
 
 import java.nio.ByteBuffer
-import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
-
-val CHARSET = StandardCharsets.US_ASCII
 
 /**
  * Disk blockに保存されている内容（値）を保持するクラス
@@ -20,6 +17,7 @@ val CHARSET = StandardCharsets.US_ASCII
  */
 class Page {
     private var bb: ByteBuffer
+    private val charset = StandardCharsets.US_ASCII
 
     constructor(blockSize: Int) {
         bb = ByteBuffer.allocateDirect(blockSize)
@@ -71,14 +69,14 @@ class Page {
      */
     fun getString(offset: Int): String {
         val b = getBytes(offset)
-        return String(b, CHARSET)
+        return String(b, charset)
     }
 
     /**
      * Page内の[offset]で指定した場所に文字列[s]を保存する
      */
     fun setString(offset: Int, s: String) {
-        val b = s.toByteArray(CHARSET)
+        val b = s.toByteArray(charset)
         setBytes(offset, b)
     }
 
@@ -88,7 +86,7 @@ class Page {
      */
     companion object {
         fun maxLength(strSize: Int): Int {
-            val bytesPerChar = CHARSET.newEncoder().maxBytesPerChar()
+            val bytesPerChar = charset.newEncoder().maxBytesPerChar()
             return Integer.BYTES + (strSize * (bytesPerChar.toInt()))
         }
     }
