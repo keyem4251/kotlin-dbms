@@ -31,6 +31,10 @@ class Layout {
         return slotSize
     }
 
+    fun schema(): Schema {
+        return schema
+    }
+
     private fun lengthInBytes(folderName: String): Int {
         val folderType = schema.type(folderName)
         if (folderType == java.sql.Types.INTEGER) return Integer.BYTES
