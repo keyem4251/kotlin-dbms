@@ -3,11 +3,6 @@ package simpledb.record
 import simpledb.file.BlockId
 import simpledb.tx.Transaction
 
-enum class RecordPageState(val id: Int) {
-    EMPTY(0),
-    USED(1),
-}
-
 class RecordPage(
     private val transaction: Transaction,
     val blockId: BlockId,
