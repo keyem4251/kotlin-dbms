@@ -1,5 +1,7 @@
 package simpledb.query
 
+import simpledb.record.RID
+
 /**
  * テーブル更新scanにより実装されるインターフェイス
  */
