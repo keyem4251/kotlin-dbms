@@ -10,9 +10,9 @@ class Layout {
     constructor(schema: Schema) {
         this.schema = schema
         var pos = Integer.BYTES // space for the empty/inuse flag
-        for (folderName in schema.fields) {
-            offsets[folderName] = pos
-            pos += lengthInBytes(folderName)
+        for (fieldName in schema.fields) {
+            offsets[fieldName] = pos
+            pos += lengthInBytes(fieldName)
         }
         this.slotSize = pos
     }
@@ -23,8 +23,8 @@ class Layout {
         this.slotSize = slotSize
     }
 
-    fun offset(folderName: String): Int? {
-        return offsets[folderName]
+    fun offset(fieldName: String): Int? {
+        return offsets[fieldName]
     }
 
     fun slotSize(): Int {
@@ -35,10 +35,10 @@ class Layout {
         return schema
     }
 
-    private fun lengthInBytes(folderName: String): Int {
-        val folderType = schema.type(folderName)
+    private fun lengthInBytes(fieldName: String): Int {
+        val folderType = schema.type(fieldName)
         if (folderType == java.sql.Types.INTEGER) return Integer.BYTES
-        val schemaLength = schema.length(folderName) ?: return 0
+        val schemaLength = schema.length(fieldName) ?: return 0
         // folderType == java.sql.Types.VARCHAR
         return Page.maxLength(schemaLength)
     }
