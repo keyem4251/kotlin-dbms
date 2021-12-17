@@ -4,7 +4,7 @@ plugins {
     kotlin("jvm") version "1.5.10"
 }
 
-group = "me.go-dbms"
+group = "me.kotlin-dbms"
 version = "1.0-SNAPSHOT"
 
 repositories {
