@@ -4,41 +4,41 @@ class Schema {
     val fields = mutableListOf<String>()
     private val info = mutableMapOf<String, FieldInfo>()
 
-    fun addField(folderName: String, type: Int, length: Int) {
-        fields.add(folderName)
-        info[folderName] = FieldInfo(type, length)
+    fun addField(fieldName: String, type: Int, length: Int) {
+        fields.add(fieldName)
+        info[fieldName] = FieldInfo(type, length)
     }
 
-    fun addIntField(folderName: String) {
-        addField(folderName, java.sql.Types.INTEGER, 0)
+    fun addIntField(fieldName: String) {
+        addField(fieldName, java.sql.Types.INTEGER, 0)
     }
 
-    fun addStringField(folderName: String, length: Int) {
-        addField(folderName, java.sql.Types.VARCHAR, length)
+    fun addStringField(fieldName: String, length: Int) {
+        addField(fieldName, java.sql.Types.VARCHAR, length)
     }
 
-    fun add(folderName: String, schema: Schema) {
-        val type = schema.type(folderName) ?: return
-        val length = schema.length(folderName) ?: return
-        addField(folderName, type, length)
+    fun add(fieldName: String, schema: Schema) {
+        val type = schema.type(fieldName) ?: return
+        val length = schema.length(fieldName) ?: return
+        addField(fieldName, type, length)
     }
 
     fun addAll(schema: Schema) {
-        for (folderName in schema.fields) {
-            add(folderName, schema)
+        for (fieldName in schema.fields) {
+            add(fieldName, schema)
         }
     }
 
-    fun hasField(folderName: String): Boolean {
-        return fields.contains(folderName)
+    fun hasField(fieldName: String): Boolean {
+        return fields.contains(fieldName)
     }
 
-    fun type(folderName: String): Int? {
-        return info[folderName]?.type
+    fun type(fieldName: String): Int? {
+        return info[fieldName]?.type
     }
 
-    fun length(folderName: String): Int? {
-        return info[folderName]?.length
+    fun length(fieldName: String): Int? {
+        return info[fieldName]?.length
     }
 
     class FieldInfo(val type: Int, val length: Int)
