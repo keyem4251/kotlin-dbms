@@ -12,26 +12,26 @@ class RecordPage(
         transaction.pin(blockId)
     }
 
-    fun getInt(slot: Int, folderName: String): Int {
-        val layoutOffset = layout.offset(folderName) ?: throw RecordPageException()
+    fun getInt(slot: Int, fieldName: String): Int {
+        val layoutOffset = layout.offset(fieldName) ?: throw RecordPageException()
         val folderPosition = offset(slot) + layoutOffset
         return transaction.getInt(blockId, folderPosition) ?: throw RecordPageException()
     }
 
-    fun getString(slot: Int, folderName: String): String {
-        val layoutOffset = layout.offset(folderName) ?: throw RecordPageException()
+    fun getString(slot: Int, fieldName: String): String {
+        val layoutOffset = layout.offset(fieldName) ?: throw RecordPageException()
         val folderPosition = offset(slot) + layoutOffset
         return transaction.getString(blockId, folderPosition) ?: throw RecordPageException()
     }
 
-    fun setInt(slot: Int, folderName: String, value: Int) {
-        val layoutOffset = layout.offset(folderName) ?: throw RecordPageException()
+    fun setInt(slot: Int, fieldName: String, value: Int) {
+        val layoutOffset = layout.offset(fieldName) ?: throw RecordPageException()
         val folderPosition = offset(slot) + layoutOffset
         transaction.setInt(blockId, folderPosition, value, true)
     }
 
-    fun setString(slot: Int, folderName: String, value: String) {
-        val layoutOffset = layout.offset(folderName) ?: throw RecordPageException()
+    fun setString(slot: Int, fieldName: String, value: String) {
+        val layoutOffset = layout.offset(fieldName) ?: throw RecordPageException()
         val folderPosition = offset(slot) + layoutOffset
         transaction.setString(blockId, folderPosition, value, true)
     }
@@ -45,10 +45,10 @@ class RecordPage(
         while (isValidSlot(slot)) {
             transaction.setInt(blockId, offset(slot), RecordPageState.EMPTY.id, false)
             val schema = layout.schema()
-            for (folderName in schema.fields) {
-                val layoutOffset = layout.offset(folderName) ?: throw RecordPageException()
+            for (fieldName in schema.fields) {
+                val layoutOffset = layout.offset(fieldName) ?: throw RecordPageException()
                 val folderPosition = offset(slot) + layoutOffset
-                if (schema.type(folderName) == java.sql.Types.INTEGER) {
+                if (schema.type(fieldName) == java.sql.Types.INTEGER) {
                     transaction.setInt(blockId, folderPosition, 0, false)
                 } else {
                     transaction.setString(blockId, folderPosition, "", false)
