@@ -14,26 +14,26 @@ class RecordPage(
 
     fun getInt(slot: Int, fieldName: String): Int {
         val layoutOffset = layout.offset(fieldName) ?: throw RecordPageException()
-        val folderPosition = offset(slot) + layoutOffset
-        return transaction.getInt(blockId, folderPosition) ?: throw RecordPageException()
+        val fieldPosition = offset(slot) + layoutOffset
+        return transaction.getInt(blockId, fieldPosition) ?: throw RecordPageException()
     }
 
     fun getString(slot: Int, fieldName: String): String {
         val layoutOffset = layout.offset(fieldName) ?: throw RecordPageException()
-        val folderPosition = offset(slot) + layoutOffset
-        return transaction.getString(blockId, folderPosition) ?: throw RecordPageException()
+        val fieldPosition = offset(slot) + layoutOffset
+        return transaction.getString(blockId, fieldPosition) ?: throw RecordPageException()
     }
 
     fun setInt(slot: Int, fieldName: String, value: Int) {
         val layoutOffset = layout.offset(fieldName) ?: throw RecordPageException()
-        val folderPosition = offset(slot) + layoutOffset
-        transaction.setInt(blockId, folderPosition, value, true)
+        val fieldPosition = offset(slot) + layoutOffset
+        transaction.setInt(blockId, fieldPosition, value, true)
     }
 
     fun setString(slot: Int, fieldName: String, value: String) {
         val layoutOffset = layout.offset(fieldName) ?: throw RecordPageException()
-        val folderPosition = offset(slot) + layoutOffset
-        transaction.setString(blockId, folderPosition, value, true)
+        val fieldPosition = offset(slot) + layoutOffset
+        transaction.setString(blockId, fieldPosition, value, true)
     }
 
     fun delete(slot: Int) {
@@ -47,11 +47,11 @@ class RecordPage(
             val schema = layout.schema()
             for (fieldName in schema.fields) {
                 val layoutOffset = layout.offset(fieldName) ?: throw RecordPageException()
-                val folderPosition = offset(slot) + layoutOffset
+                val fieldPosition = offset(slot) + layoutOffset
                 if (schema.type(fieldName) == java.sql.Types.INTEGER) {
-                    transaction.setInt(blockId, folderPosition, 0, false)
+                    transaction.setInt(blockId, fieldPosition, 0, false)
                 } else {
-                    transaction.setString(blockId, folderPosition, "", false)
+                    transaction.setString(blockId, fieldPosition, "", false)
                 }
             }
             slot++

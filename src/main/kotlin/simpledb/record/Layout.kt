@@ -36,10 +36,10 @@ class Layout {
     }
 
     private fun lengthInBytes(fieldName: String): Int {
-        val folderType = schema.type(fieldName)
-        if (folderType == java.sql.Types.INTEGER) return Integer.BYTES
+        val fieldType = schema.type(fieldName)
+        if (fieldType == java.sql.Types.INTEGER) return Integer.BYTES
         val schemaLength = schema.length(fieldName) ?: return 0
-        // folderType == java.sql.Types.VARCHAR
+        // fieldType == java.sql.Types.VARCHAR
         return Page.maxLength(schemaLength)
     }
 }
