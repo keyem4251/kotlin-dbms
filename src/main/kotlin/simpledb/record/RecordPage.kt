@@ -3,6 +3,19 @@ package simpledb.record
 import simpledb.file.BlockId
 import simpledb.tx.Transaction
 
+/**
+ * 1つのブロック（スロットの配列）を表すクラス: サイズとして何バイトか決まっている
+ * 1ブロックをスロットの配列として管理（スロットは1レコード+レコードの使用有無のフラグ: 0は空、1は使用済み）
+ * Record Pageのイメージ: [slot0|slot1|.....|slot13|空き領域]
+ * 1ブロック400バイト
+ * スロット使用領域: 378バイト
+ * 空き領域: 22バイト
+ * slot0: [1|record0]
+ * slot1: [0|record1]
+ * slot13: [1|record13]
+ * (1 record 26バイト（layoutが保持する情報）+ 使用済みかのフラグ 1バイト)* 14 slot
+ * transactionを通して値に設定する
+ */
 class RecordPage(
     private val transaction: Transaction,
     val blockId: BlockId,
