@@ -25,34 +25,56 @@ class RecordPage(
         transaction.pin(blockId)
     }
 
+    /**
+     * [slot]受け取ったレコードのスロットの位置の[fieldName]フィールド名を返す
+     * @return レコードの数値
+     */
     fun getInt(slot: Int, fieldName: String): Int {
         val layoutOffset = layout.offset(fieldName) ?: throw RecordPageException()
         val fieldPosition = offset(slot) + layoutOffset
         return transaction.getInt(blockId, fieldPosition) ?: throw RecordPageException()
     }
 
+    /**
+     * [slot]受け取ったレコードのスロットの位置の[fieldName]フィールド名を返す
+     * @return レコードの文字列
+     */
     fun getString(slot: Int, fieldName: String): String {
         val layoutOffset = layout.offset(fieldName) ?: throw RecordPageException()
         val fieldPosition = offset(slot) + layoutOffset
         return transaction.getString(blockId, fieldPosition) ?: throw RecordPageException()
     }
 
+    /**
+     * [slot]受け取ったレコードのスロットの位置の[fieldName]フィールド名に指定された[value]値を設定する
+     */
     fun setInt(slot: Int, fieldName: String, value: Int) {
         val layoutOffset = layout.offset(fieldName) ?: throw RecordPageException()
         val fieldPosition = offset(slot) + layoutOffset
         transaction.setInt(blockId, fieldPosition, value, true)
     }
 
+    /**
+     * [slot]受け取ったレコードのスロットの位置の[fieldName]フィールド名に指定された[value]値を設定する
+     */
     fun setString(slot: Int, fieldName: String, value: String) {
         val layoutOffset = layout.offset(fieldName) ?: throw RecordPageException()
         val fieldPosition = offset(slot) + layoutOffset
         transaction.setString(blockId, fieldPosition, value, true)
     }
 
+    /**
+     * [slot]受け取ったレコードのスロットのフラグを空にする
+     */
     fun delete(slot: Int) {
         setFlag(slot, RecordPageState.EMPTY.id)
     }
 
+    /**
+     * レイアウトの構造を元にして、新しいレコードのブロックをフォーマットする
+     * RecordPageのスロット、レコードの配列を初期化する（状態、値を空にする）
+     * トランザクションのログには記録しない
+     */
     fun format() {
         var slot = 0
         while (isValidSlot(slot)) {
@@ -71,19 +93,32 @@ class RecordPage(
         }
     }
 
+    /**
+     * [slot]受け取ったレコードのスロットの後の使用されているスロットを返す
+     * @return 指定されたスロットの後ろのスロット、なければ-1
+     */
     fun nextAfter(slot: Int): Int {
         return searchAfter(slot, RecordPageState.USED.id)
     }
 
+    /**
+     * [slot]受け取ったレコードのスロットの後ろの空のスロットを使用済みのフラグに変えてスロットを返す
+     * @return 指定されたスロットの後ろの空のスロット、なければ-1
+     */
     fun insertAfter(slot: Int): Int {
         val newSlot = searchAfter(slot, RecordPageState.EMPTY.id)
         if (newSlot >= 0) setFlag(newSlot, RecordPageState.USED.id)
         return newSlot
     }
 
+    /**
+     * [slot]受け取ったレコードのスロットの後の[flag]指定されたフラグのスロットを返す
+     * @return 指定されたスロットの後ろのスロット、なければ-1
+     */
     private fun searchAfter(slot: Int, flag: Int): Int {
         var nextSlot = slot + 1
         while (isValidSlot(nextSlot)) {
+            // slot = [state|record]の構造なのでnextSlotの位置はflag
             val transactionInt = transaction.getInt(blockId, offset(nextSlot))
             if (transactionInt != null && transactionInt == flag) {
                 return nextSlot
@@ -93,15 +128,26 @@ class RecordPage(
         return -1
     }
 
+    /**
+     * [slot]受け取ったレコードのスロットが有効か返す
+     * @return 有効ならtrue
+     */
     private fun isValidSlot(slot: Int): Boolean {
+        // 受け取ったスロットの次のスロットの位置がトランザクションのブロックのサイズより小さいならtrue
         return offset(slot+1) <= transaction.blockSize()
     }
 
-    // Private auxiliary methods
+    /**
+     * [slot]受け取ったレコードのスロットに[flag]指定されたフラグを設定する
+     */
     private fun setFlag(slot: Int, flag: Int) {
         transaction.setInt(blockId, offset(slot), flag, true)
     }
 
+    /**
+     * [slot]受け取ったレコードのスロットの始まる位置を計算する
+     * @return スロットの位置
+     */
     private fun offset(slot: Int): Int {
         return slot * layout.slotSize()
     }
