@@ -15,6 +15,7 @@ import java.lang.RuntimeException
  *   RecordPage1: [slot0|slot1|.....|slot13|空き領域]
  *   RecordPage2: [slot0|slot1|.....|slot13|空き領域]
  *
+ * @property transaction テーブルを操作するトランザクション
  * @property recordPage スロットを管理する（スロットをブロックに割り当てている: RecordPageごとにブロックが決まってる）
  * @property currentSlot 操作対象となる現在のレコード
  */
@@ -41,6 +42,10 @@ class TableScan(
     }
 
     // methods that implement Scan
+    /**
+     * データを操作するブロックをトランザクションの対象から外す
+     * 新しいブロックをデータ操作の対象とする（ロックがかかるため）
+     */
     override fun close() {
         transaction.unpin(recordPage.blockId)
     }
