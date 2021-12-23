@@ -2,6 +2,12 @@ package simpledb.query
 
 import java.lang.RuntimeException
 
+/**
+ * データベースに保存される値を表すクラス
+ *
+ * @property intValue 数値
+ * @property stringValue 文字列
+ */
 class Constant: Comparable<Constant> {
     private var intValue: Int? = null
     private var stringValue: String? = null
