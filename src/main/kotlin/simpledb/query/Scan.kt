@@ -2,6 +2,7 @@ package simpledb.query
 
 /**
  * それぞれのクエリスキャンで実装される
+ * クエリスキャンはテーブルのレコードを操作するクラス
  */
 interface Scan {
 
