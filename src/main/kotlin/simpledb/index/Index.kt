@@ -1,4 +1,4 @@
-package simpledb
+package simpledb.index
 
 import simpledb.query.Constant
 import simpledb.record.RID
