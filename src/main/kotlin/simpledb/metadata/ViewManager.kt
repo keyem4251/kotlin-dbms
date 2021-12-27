@@ -14,7 +14,7 @@ class ViewManager(
     init {
         if (isNew) {
             val schema = Schema()
-            schema.addStringField("viewname", tableManager.max_name)
+            schema.addStringField("viewname", MAX_NAME)
             schema.addStringField("viewdef", max_viewdef)
             tableManager.createTable("viewcatalog", schema, transaction)
         }
