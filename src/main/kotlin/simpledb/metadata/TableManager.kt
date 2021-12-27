@@ -13,7 +13,7 @@ class TableManager(
     private val transaction: Transaction,
 ) {
     private var tableCatalogLayout: Layout
-    private lateinit var fieldCatalogLayout: Layout
+    private var fieldCatalogLayout: Layout
 
     init {
         val tableCatalogSchema = Schema()
