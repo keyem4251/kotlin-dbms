@@ -6,7 +6,7 @@ import simpledb.tx.Transaction
 
 class StatisticsManager(
     private val tableManager: TableManager,
-    tx: Transaction,
+    private val tx: Transaction,
 ) {
     private val tableStatistics = mutableMapOf<String, StatisticsInformation>()
     private var numberCalls = 0
