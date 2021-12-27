@@ -6,23 +6,24 @@ import simpledb.record.TableScan
 import simpledb.tx.Transaction
 import java.lang.RuntimeException
 
+const val MAX_NAME = 16
+
 class TableManager(
     private val isNew: Boolean,
     private val transaction: Transaction,
 ) {
-    val max_name = 16
     private var tableCatalogLayout: Layout
     private lateinit var fieldCatalogLayout: Layout
 
     init {
         val tableCatalogSchema = Schema()
-        tableCatalogSchema.addStringField("tablename", max_name)
+        tableCatalogSchema.addStringField("tablename", MAX_NAME)
         tableCatalogSchema.addIntField("slotsize")
         tableCatalogLayout = Layout(tableCatalogSchema)
 
         val fieldCatalogSchema = Schema()
-        fieldCatalogSchema.addStringField("tablename", max_name)
-        fieldCatalogSchema.addStringField("fieldname", max_name)
+        fieldCatalogSchema.addStringField("tablename", MAX_NAME)
+        fieldCatalogSchema.addStringField("fieldname", MAX_NAME)
         fieldCatalogSchema.addIntField("type")
         fieldCatalogSchema.addIntField("length")
         fieldCatalogSchema.addIntField("offset")
