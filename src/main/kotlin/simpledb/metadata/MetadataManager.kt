@@ -19,7 +19,7 @@ class MetadataManager(
         tableManager = TableManager(isNew, transaction)
         viewManager = ViewManager(isNew, tableManager, transaction)
         statisticsManager = StatisticsManager(tableManager, transaction)
-        indexManager = IndexManager(isNew, tableManager, statisticsManager, transaction)s)
+        indexManager = IndexManager(isNew, tableManager, statisticsManager, transaction)
     }
 
     fun createTable(tableName: String, schema: Schema, tx: Transaction) {
