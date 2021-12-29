@@ -8,6 +8,18 @@ import java.lang.RuntimeException
 
 const val MAX_NAME = 16
 
+/**
+ * テーブル情報を管理するクラス
+ * コンストラクタはシステムの起動時に一度だけ呼ばれる
+ * データベースエンジンはデータベース内のテーブルのカタログと言う名前で保存する
+ * テーブルカタログ: それぞれのテーブルのメタデータ
+ *   TableCatalog(TableName, SlotSize)
+ *   テーブル名、スロットサイズ（1行の長さ）
+ *   Layoutオブジェクトによりスロットサイズが計算される
+ * フィールドカタログ: それぞれのテーブルのフィールドのメタデータ
+ *   FieldCatalog(TableName, FieldName, Type, Length, Offset)
+ *   テーブル名、フィールド名、型、フィールドの長さ、1行の中のフィールドの位置
+ */
 class TableManager(
     private val isNew: Boolean,
     private val transaction: Transaction,
@@ -35,6 +47,9 @@ class TableManager(
         }
     }
 
+    /**
+     * [tableName]テーブル名と[schema]を受け取りレコードの位置を計算し、カタログに保存する
+     */
     fun createTable(tableName: String, schema: Schema, transaction: Transaction) {
         val layout = Layout(schema)
 
@@ -61,6 +76,10 @@ class TableManager(
         fieldCatalog.close()
     }
 
+    /**
+     * [tableName]テーブル名を受け取りカタログに行き、テーブルのメタデータを含むレイアウトオブジェクトを返す
+     * @return テーブルのメタデータを含むレイアウト
+     */
     fun getLayout(tableName: String, transaction: Transaction): Layout {
         var size = -1
         val tableCatalog = TableScan(transaction, "tablecatalog", tableCatalogLayout)
