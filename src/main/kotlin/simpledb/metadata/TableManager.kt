@@ -55,14 +55,14 @@ class TableManager(
     fun createTable(tableName: String, schema: Schema, tx: Transaction) {
         val layout = Layout(schema)
 
-        // insert on record into table catalog
+        // テーブルを管理するカタログにテーブルの情報を作成
         val tableCatalog = TableScan(tx, "tablecatalog", tableCatalogLayout)
         tableCatalog.insert()
         tableCatalog.setString("tablename", tableName)
         tableCatalog.setInt("slotsize", layout.slotSize())
         tableCatalog.close()
 
-        // insert a record into field catalog for each field
+        // フィールドを管理するカタログにテーブル内のそれぞれのフィールドの情報を作成
         val fieldCatalog = TableScan(tx, "fieldcatalog", fieldCatalogLayout)
         for (fieldName in schema.fields) {
             fieldCatalog.insert()
@@ -79,11 +79,12 @@ class TableManager(
     }
 
     /**
-     * [tableName]テーブル名を受け取りカタログに行き、テーブルのメタデータを含むレイアウトオブジェクトを返す
+     * [tableName]テーブル名を受け取りカタログにから、テーブルのメタデータを含むレイアウトオブジェクトを返す
      * カタログ: データベースが管理する複数のテーブルのまとまり。カタログ自身もテーブル。
      * @return テーブルのメタデータを含むレイアウト
      */
     fun getLayout(tableName: String, tx: Transaction): Layout {
+        // テーブルのスロットサイズ
         var size = -1
         val tableCatalog = TableScan(tx, "tablecatalog", tableCatalogLayout)
         while (tableCatalog.next()) {
