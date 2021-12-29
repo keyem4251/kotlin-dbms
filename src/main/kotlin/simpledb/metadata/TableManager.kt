@@ -50,18 +50,18 @@ class TableManager(
     /**
      * [tableName]テーブル名と[schema]を受け取りレコードの位置を計算し、カタログに保存する
      */
-    fun createTable(tableName: String, schema: Schema, transaction: Transaction) {
+    fun createTable(tableName: String, schema: Schema, tx: Transaction) {
         val layout = Layout(schema)
 
         // insert on record into table catalog
-        val tableCatalog = TableScan(transaction, "tablecatalog", tableCatalogLayout)
+        val tableCatalog = TableScan(tx, "tablecatalog", tableCatalogLayout)
         tableCatalog.insert()
         tableCatalog.setString("tablename", tableName)
         tableCatalog.setInt("slotsize", layout.slotSize())
         tableCatalog.close()
 
         // insert a record into field catalog for each field
-        val fieldCatalog = TableScan(transaction, "fieldcatalog", fieldCatalogLayout)
+        val fieldCatalog = TableScan(tx, "fieldcatalog", fieldCatalogLayout)
         for (fieldName in schema.fields) {
             fieldCatalog.insert()
             fieldCatalog.setString("tablename", tableName)
@@ -80,9 +80,9 @@ class TableManager(
      * [tableName]テーブル名を受け取りカタログに行き、テーブルのメタデータを含むレイアウトオブジェクトを返す
      * @return テーブルのメタデータを含むレイアウト
      */
-    fun getLayout(tableName: String, transaction: Transaction): Layout {
+    fun getLayout(tableName: String, tx: Transaction): Layout {
         var size = -1
-        val tableCatalog = TableScan(transaction, "tablecatalog", tableCatalogLayout)
+        val tableCatalog = TableScan(tx, "tablecatalog", tableCatalogLayout)
         while (tableCatalog.next()) {
             if (tableCatalog.getString("tablename") == tableName) {
                 size = tableCatalog.getInt("slotsize")
@@ -92,7 +92,7 @@ class TableManager(
         tableCatalog.close()
         val schema = Schema()
         val offsets = mutableMapOf<String, Int>()
-        val fieldCatalog = TableScan(transaction, "fieldcatalog", fieldCatalogLayout)
+        val fieldCatalog = TableScan(tx, "fieldcatalog", fieldCatalogLayout)
         while (fieldCatalog.next()) {
             if (fieldCatalog.getString("tablename") == tableName) {
                 val fieldName = fieldCatalog.getString("fieldname")
