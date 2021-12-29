@@ -4,6 +4,9 @@ import simpledb.record.Layout
 import simpledb.record.Schema
 import simpledb.tx.Transaction
 
+/**
+ * テーブル、ビュー、インデックス、統計情報のメタデータを管理するクラス
+ */
 class MetadataManager(
     private val isNew: Boolean,
     private val transaction: Transaction,
