@@ -11,7 +11,8 @@ const val MAX_NAME = 16
 /**
  * テーブル情報を管理するクラス
  * コンストラクタはシステムの起動時に一度だけ呼ばれる
- * データベースエンジンはデータベース内のテーブルのカタログと言う名前で保存する
+ * データベースエンジンはデータベース内のテーブルを複数まとめて、カタログと言う名前で保存する
+ * カタログ自身もテーブルで以下のフィールドを持つ
  * テーブルカタログ: それぞれのテーブルのメタデータ
  *   TableCatalog(TableName, SlotSize)
  *   テーブル名、スロットサイズ（1行の長さ）
@@ -49,6 +50,7 @@ class TableManager(
 
     /**
      * [tableName]テーブル名と[schema]を受け取りレコードの位置を計算し、カタログに保存する
+     * カタログ: データベースが管理する複数のテーブルのまとまり。カタログ自身もテーブル。
      */
     fun createTable(tableName: String, schema: Schema, tx: Transaction) {
         val layout = Layout(schema)
@@ -78,6 +80,7 @@ class TableManager(
 
     /**
      * [tableName]テーブル名を受け取りカタログに行き、テーブルのメタデータを含むレイアウトオブジェクトを返す
+     * カタログ: データベースが管理する複数のテーブルのまとまり。カタログ自身もテーブル。
      * @return テーブルのメタデータを含むレイアウト
      */
     fun getLayout(tableName: String, tx: Transaction): Layout {
