@@ -4,6 +4,13 @@ import simpledb.record.Schema
 import simpledb.record.TableScan
 import simpledb.tx.Transaction
 
+/**
+ * ビューはクエリから動的に計算されるレコードを持つテーブル
+ * メタデータマネージャは各ビューの定義を保存し、要求された際にビューを定義しているクエリを返す
+ * ビューマネージャーはカタログテーブル（view catalog）にビューの定義を保存します
+ * 形式は1つのビューごとに1つのレコード
+ * 1レコードはviewcat(ViewName, ViewDef)よりViewName, ViewDefの2つのフィールドを持つ
+ */
 class ViewManager(
     private val isNew: Boolean,
     val tableManager: TableManager,
