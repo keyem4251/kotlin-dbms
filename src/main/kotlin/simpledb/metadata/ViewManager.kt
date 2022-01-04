@@ -10,6 +10,8 @@ import simpledb.tx.Transaction
  * ビューマネージャーはカタログテーブル（view catalog）にビューの定義を保存します
  * 形式は1つのビューごとに1つのレコード
  * 1レコードはviewcat(ViewName, ViewDef)よりViewName, ViewDefの2つのフィールドを持つ
+ * 
+ * システムが立ち上がり、データベースが作成されたときにクラスが作成される
  */
 class ViewManager(
     private val isNew: Boolean,
@@ -27,6 +29,10 @@ class ViewManager(
         }
     }
 
+    /**
+     * [viewName]指定されたビューの名前、[viewDef]指定されたビューの定義を元にカタログテーブルにレコードを挿入する
+     * カタログテーブルにアクセスするためTableScanクラスを使用する
+     */
     fun createView(viewName: String, viewDef: String, transaction: Transaction) {
         val layout = tableManager.getLayout("viewcatalog", transaction)
         val tableScan = TableScan(transaction, "viewcatalog", layout)
@@ -35,6 +41,11 @@ class ViewManager(
         tableScan.close()
     }
 
+    /**
+     * [viewName]指定されたビューの名前のビューの定義を返す
+     * カタログテーブルにアクセスするためTableScanクラスを使用する
+     * @return ビュー定義、該当する定義がない場合はnullを返す
+     */
     fun getViewDef(viewName: String, transaction: Transaction): String? {
         var result: String? = null
         val layout = tableManager.getLayout("viewcatalog", transaction)
