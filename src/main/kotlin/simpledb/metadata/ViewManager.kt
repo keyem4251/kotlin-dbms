@@ -12,6 +12,8 @@ import simpledb.tx.Transaction
  * 1レコードはviewcat(ViewName, ViewDef)よりViewName, ViewDefの2つのフィールドを持つ
  * 
  * システムが立ち上がり、データベースが作成されたときにクラスが作成される
+ * 
+ * @property max_viewdef ビュー定義を文字列で保存する
  */
 class ViewManager(
     private val isNew: Boolean,
