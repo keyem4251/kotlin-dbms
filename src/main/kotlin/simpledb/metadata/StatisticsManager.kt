@@ -9,6 +9,7 @@ import simpledb.tx.Transaction
  * 
  * @property tableStatistics 各テーブルの統計情報
  * getメソッドで統計情報を返し、refresh/calcメソッドで統計情報を再計算する
+ * @property numberCalls getStatisticsInformationが呼ばれるとインクリメントされる、100になると統計情報を再計算する
  */
 class StatisticsManager(
     private val tableManager: TableManager,
@@ -23,7 +24,8 @@ class StatisticsManager(
     }
 
     /**
-     * StatisticsInformationクラスを返す
+     * [tableName]指定されたテーブル名の統計情報をStatisticsInformationクラスとして返す
+     * numberCallsをインクリメントし、100を超える場合は統計情報を再計算する
      * @return 統計情報
      */
     @Synchronized
@@ -32,12 +34,17 @@ class StatisticsManager(
         if (numberCalls > 100) refreshStatistics(transaction)
         var statisticsInformation = tableStatistics[tableName]
         if (statisticsInformation == null) {
+            // 統計情報がない場合は統計情報を計算する
             statisticsInformation = calcTableStatistics(tableName, layout, transaction)
             tableStatistics[tableName] = statisticsInformation
         }
         return statisticsInformation
     }
 
+    /**
+     * テーブルカタログをループし、テーブルの統計情報を再計算する
+     * 現在データベースで保持しているテーブルの統計情報をすべて再計算する
+     */
     @Synchronized
     private fun refreshStatistics(transaction: Transaction) {
         numberCalls = 0
@@ -52,6 +59,11 @@ class StatisticsManager(
         tableCatalog.close()
     }
 
+    /**
+     * [tableName]指定されたテーブル名の[layout]スキーマ情報を受け取り、TableScanクラスによって
+     * テーブルのレコード、ブロックの数を計算する
+     * @return テーブルの統計情報
+     */
     @Synchronized
     private fun calcTableStatistics(tableName: String, layout: Layout, transaction: Transaction): StatisticsInformation {
         var numberRecords = 0
