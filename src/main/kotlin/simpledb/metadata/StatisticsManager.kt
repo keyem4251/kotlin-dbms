@@ -4,6 +4,12 @@ import simpledb.record.Layout
 import simpledb.record.TableScan
 import simpledb.tx.Transaction
 
+/**
+ * 統計情報を管理するクラス
+ * 
+ * @property tableStatistics 各テーブルの統計情報
+ * getメソッドで統計情報を返し、refresh/calcメソッドで統計情報を再計算する
+ */
 class StatisticsManager(
     private val tableManager: TableManager,
     private val tx: Transaction,
@@ -16,6 +22,10 @@ class StatisticsManager(
         refreshStatistics(tx)
     }
 
+    /**
+     * StatisticsInformationクラスを返す
+     * @return 統計情報
+     */
     @Synchronized
     fun getStatisticsInformation(tableName: String, layout: Layout, transaction: Transaction): StatisticsInformation {
         numberCalls += 1
