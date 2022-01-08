@@ -17,24 +17,44 @@ class IndexInfo(
     private val statisticsInformation: StatisticsInformation
 ) {
     private var indexLayout: Layout
+    /**
+     * コンストラクタで受け取るインデックスの情報、関連するテーブルの統計情報を元にインデックスのスキーマ情報を作成する
+     * IndexInfoクラスがインデックスのスキーマ、インデックスのファイルサイズを見積もるためのレイアウトクラス
+     */
     init {
         indexLayout = createIndexLayout()
     }
 
+    /**
+     * インデックスクラスを返す
+     * @return インデックスクラス
+     */
     fun open(): Index {
         return HashIndex(transaction, indexName, indexLayout)
     }
 
+    /**
+     * インデックスの検索に必要なブロックアクセス数を返す（インデックスのサイズではなく）
+     * @return ブロックアクセス数
+     */
     fun blocksAccessed(): Int {
         val recordPerBlock = transaction.blockSize() / indexLayout.slotSize()
         val numberBlocks = statisticsInformation.recordsOutput() / recordPerBlock
         return HashIndex.searchCost(numberBlocks, recordPerBlock)
     }
 
+    /**
+     * インデックスのレコード数を返す
+     * @return インデックスのレコード数
+     */
     fun recordsOutput(): Int {
         return statisticsInformation.recordsOutput() / statisticsInformation.distinctValues(fieldName)
     }
 
+    /**
+     * インデックスのフィールドのばらつき（フィールドが何種類か）を返す
+     * @return フィールドのばらつき
+     */
     fun distinctValues(fName: String): Int {
         return if (fieldName == fName) {
             1
@@ -43,6 +63,9 @@ class IndexInfo(
         }
     }
 
+    /**
+     * コンストラクタで受け取る情報を元にインデックスのスキーマ情報を作成する
+     */
     private fun createIndexLayout(): Layout {
         val schema = Schema()
         schema.addIntField("block")
