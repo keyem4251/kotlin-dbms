@@ -5,6 +5,11 @@ import simpledb.record.Schema
 import simpledb.record.TableScan
 import simpledb.tx.Transaction
 
+/**
+ * インデックスを管理するクラス
+ * テーブルマネージャと似ている関数を持つ
+ * システムの立ち上げ時に初期化される
+ */
 class IndexManager(
     private val isNew: Boolean,
     private val tableManager: TableManager,
@@ -13,6 +18,10 @@ class IndexManager(
 ) {
     private var layout: Layout
 
+    /**
+     * データベースが新しく作られた場合だけindexcatalogテーブルを作成する
+     * indexcatalog: どのテーブルのどのフィールドにインデックスが張られているかを管理するテーブル
+     */
     init {
         if (isNew) {
             val schema = Schema()
