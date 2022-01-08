@@ -6,6 +6,9 @@ import simpledb.record.Layout
 import simpledb.record.Schema
 import simpledb.tx.Transaction
 
+/**
+ * インデックスに関する統計情報を持つクラス
+ */
 class IndexInfo(
     private val indexName: String,
     private val fieldName: String,
