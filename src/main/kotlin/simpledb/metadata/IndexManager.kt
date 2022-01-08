@@ -37,6 +37,10 @@ class IndexManager(
         tableScan.close()
     }
 
+    /**
+     * [tableName]指定されたテーブルに設定されているインデックスをマップで返す
+     * @return インデックスのマップ<フィールド名、インデックスの情報>
+     */
     fun getIndexInfo(tableName: String, tx: Transaction): MutableMap<String, IndexInfo> {
         val result = mutableMapOf<String, IndexInfo>()
         val tableScan = TableScan(tx, "indexcatalog", layout)
