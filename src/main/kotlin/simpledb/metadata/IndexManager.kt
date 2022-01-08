@@ -24,6 +24,10 @@ class IndexManager(
         layout = tableManager.getLayout("indexcatalog", transaction)
     }
 
+    /**
+     * [indexName]指定されたインデックス名、[tableName]テーブル名、[fieldName]フィールド名で
+     * indexcatalog（インデックス名、テーブル名、フィールド名をテーブルに記録する）にデータを挿入する
+     */
     fun createIndex(indexName: String, tableName: String, fieldName: String, tx: Transaction) {
         val tableScan = TableScan(tx, "indexcatalog", layout)
         tableScan.insert()
