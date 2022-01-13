@@ -46,8 +46,7 @@ class MetadataManager(
         indexManager.createIndex(indexName, tableName, fieldName, tx)
     }
 
-    // returnのMutableMapをMapに変更できないか？
-    fun getIndexInformation(tableName: String, tx: Transaction): MutableMap<String, IndexInfo> {
+    fun getIndexInformation(tableName: String, tx: Transaction): Map<String, IndexInfo> {
         return indexManager.getIndexInfo(tableName, tx)
     }
 
