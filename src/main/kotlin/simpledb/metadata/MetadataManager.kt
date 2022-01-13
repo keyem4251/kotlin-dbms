@@ -6,6 +6,7 @@ import simpledb.tx.Transaction
 
 /**
  * テーブル、ビュー、インデックス、統計情報のメタデータを管理するクラス
+ * メタデータを作成、保存するメソッド、取得するメソッドを持つ
  */
 class MetadataManager(
     private val isNew: Boolean,
