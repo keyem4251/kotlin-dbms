@@ -18,12 +18,12 @@ class Expression {
         return fieldName != null
     }
 
-    fun asConstant(): Constant? {
-        return value
+    fun asConstant(): Constant {
+        return value  ?: throw RuntimeException("null error")
     }
 
-    fun asFieldName(): String? {
-        return fieldName
+    fun asFieldName(): String {
+        return fieldName ?: throw RuntimeException("null error")
     }
 
     fun evaluate(scan: Scan): Constant {
