@@ -46,7 +46,7 @@ class Expression {
         }
     }
 
-    fun toString(): String {
+    override fun toString(): String {
         return if (value != null) {
             value!!.toString()
         } else if (fieldName != null) {
