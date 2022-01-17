@@ -77,6 +77,4 @@ class Predicate {
         }
         return result
     }
-
-    fun toString
 }
