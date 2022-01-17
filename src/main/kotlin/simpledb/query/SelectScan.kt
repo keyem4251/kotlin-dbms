@@ -47,6 +47,11 @@ class SelectScan(
         updateScan.setString(fieldName, value)
     }
 
+    override fun setVal(fieldName: String, value: Constant) {
+        val updateScan = scan as UpdateScan
+        updateScan.setVal(fieldName, value)
+    }
+
     override fun delete() {
         val updateScan = scan as UpdateScan
         updateScan.delete()
