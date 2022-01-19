@@ -18,8 +18,8 @@ class Term(
     }
 
     fun reductionFactor(plan: Plan): Int {
-        var leftSideExpressionName = ""
-        var rightSideExpressionName = ""
+        val leftSideExpressionName: String
+        val rightSideExpressionName: String
         if (leftSideExpression.isFieldName() && rightSideExpression.isFieldName()) {
             leftSideExpressionName = leftSideExpression.asFieldName()
             rightSideExpressionName = leftSideExpression.asFieldName()
