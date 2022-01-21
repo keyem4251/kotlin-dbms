@@ -1,5 +1,8 @@
 package simpledb.query
 
+/**
+ * projectオペレータは入力テーブルから行の指定されたフィールドを出力する
+ */
 class ProjectScan(
     private val scan: Scan,
     private val fieldList: List<String>,
