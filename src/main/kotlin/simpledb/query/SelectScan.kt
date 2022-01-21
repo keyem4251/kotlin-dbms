@@ -2,6 +2,9 @@ package simpledb.query
 
 import simpledb.record.RID
 
+/**
+ * selectオペレータは入力テーブルから条件を満たす行を出力する
+ */
 class SelectScan(
     private val scan: Scan,
     private val predicate: Predicate,
