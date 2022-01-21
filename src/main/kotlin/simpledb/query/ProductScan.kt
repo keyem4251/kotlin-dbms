@@ -2,6 +2,11 @@ package simpledb.query
 
 /**
  * productオペレータは複数の入力テーブルからの行をunion（結合）して出力する
+ * 元になるscan1とscan2のレコードの可能な組み合わせのすべてを繰り返し処理できる必要がある
+ * scan1、scan2で2重のループとなっているイメージでscan1が外側のループ、scan2が内側のループです
+ *
+ * @property scan1 結合するテーブル1
+ * @property scan2 結合するテーブル2
  */
 class ProductScan(
     private val scan1: Scan,
@@ -17,6 +22,9 @@ class ProductScan(
         scan2.beforeFirst()
     }
 
+    /**
+     * 先にscan2を検査し続けることで入れ子のループのイメージを実現している
+     */
     override fun next(): Boolean {
         return if (scan2.next()) {
             true
@@ -26,6 +34,10 @@ class ProductScan(
         }
     }
 
+    /**
+     * 複数のテーブルの結合なので先にscan1を見て
+     * scan1に[fieldName]指定されたフィールドがあれば返す、なければscan2から返す
+     */
     override fun getInt(fieldName: String): Int {
         return if (scan1.hasField(fieldName)) {
             scan1.getInt(fieldName)
@@ -34,6 +46,10 @@ class ProductScan(
         }
     }
 
+    /**
+     * 複数のテーブルの結合なので先にscan1を見て
+     * scan1に[fieldName]指定されたフィールドがあれば返す、なければscan2から返す
+     */
     override fun getString(fieldName: String): String {
         return if (scan1.hasField(fieldName)) {
             scan1.getString(fieldName)
@@ -42,6 +58,10 @@ class ProductScan(
         }
     }
 
+    /**
+     * 複数のテーブルの結合なので先にscan1を見て
+     * scan1に[fieldName]指定されたフィールドがあれば返す、なければscan2から返す
+     */
     override fun getVal(fieldName: String): Constant {
         return if (scan1.hasField(fieldName)) {
             scan1.getVal(fieldName)
