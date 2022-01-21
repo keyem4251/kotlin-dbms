@@ -2,6 +2,10 @@ package simpledb.query
 
 /**
  * projectオペレータは入力テーブルから行の指定されたフィールドを出力する
+ * フィールド操作以外のメソッドは受け取ったscanの操作を実行する
+ *
+ * @property scan テーブルのレコードを操作する
+ * @property fieldList　フィールドのリスト
  */
 class ProjectScan(
     private val scan: Scan,
@@ -15,6 +19,9 @@ class ProjectScan(
         return scan.next()
     }
 
+    /**
+     * [fieldName]指定されたフィールドを返す
+     */
     override fun getInt(fieldName: String): Int {
         if (hasField(fieldName)) {
             return scan.getInt(fieldName)
@@ -23,6 +30,9 @@ class ProjectScan(
         }
     }
 
+    /**
+     * [fieldName]指定されたフィールドを返す
+     */
     override fun getString(fieldName: String): String {
         if (hasField(fieldName)) {
             return scan.getString(fieldName)
@@ -31,6 +41,9 @@ class ProjectScan(
         }
     }
 
+    /**
+     * [fieldName]指定されたフィールドを返す
+     */
     override fun getVal(fieldName: String): Constant {
         if (hasField(fieldName)) {
             return scan.getVal(fieldName)
@@ -39,6 +52,9 @@ class ProjectScan(
         }
     }
 
+    /**
+     * [fieldName]取得したいフィールドが指定されたフィールドかどうか判定する
+     */
     override fun hasField(fieldName: String): Boolean {
         return fieldList.contains(fieldName)
     }
