@@ -1,5 +1,8 @@
 package simpledb.query
 
+/**
+ * productオペレータは複数の入力テーブルからの行をunion（結合）して出力する
+ */
 class ProductScan(
     private val scan1: Scan,
     private val scan2: Scan,
