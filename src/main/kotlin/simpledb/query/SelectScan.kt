@@ -4,6 +4,11 @@ import simpledb.record.RID
 
 /**
  * selectオペレータは入力テーブルから条件を満たす行を出力する
+ * UpdateScanを継承している
+ * next以外のメソッドは受け取ったscanの操作を実行する
+ *
+ * @property scan テーブルのレコードを操作する
+ * @property predicate　条件
  */
 class SelectScan(
     private val scan: Scan,
@@ -13,6 +18,9 @@ class SelectScan(
         scan.beforeFirst()
     }
 
+    /**
+     * 条件に合う行かどうかを判定する
+     */
     override fun next(): Boolean {
         while (scan.next()) {
             if (predicate.isSatisfied(scan)) return true
