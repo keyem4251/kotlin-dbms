@@ -54,6 +54,10 @@ class Expression {
         }
     }
 
+    /**
+     * 指定されたスキーマにExpressionクラスのフィールドが含まれているかを判定する
+     * クエリプランナーがExpressionの範囲を判定するために使用する
+     */
     fun appliesTo(schema: Schema): Boolean {
         return if (value != null) {
             true
