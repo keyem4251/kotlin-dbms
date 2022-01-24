@@ -2,6 +2,13 @@ package simpledb.query
 
 import simpledb.record.Schema
 
+/**
+ * Constant、フィールド名に対する演算で構成式を表すクラス
+ * 「SName = "joe" and MajorId = DId」という条件式の場合、
+ *  Expressionは以下のようになる
+ *  左の式: SName フィールド名
+ *  右の式: "joe" Constant（文字列）
+ */
 class Expression {
     private var value: Constant? = null
     private var fieldName: String? = ""
