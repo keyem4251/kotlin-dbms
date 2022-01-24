@@ -3,7 +3,7 @@ package simpledb.query
 import simpledb.record.Schema
 
 /**
- * Constant、フィールド名に対する演算で構成式を表すクラス
+ * Constant、フィールド名のどちらかで成り立つ式を表すクラス
  * 「SName = "joe" and MajorId = DId」という条件式の場合、
  *  Expressionは以下のようになる
  *  左の式: SName フィールド名
