@@ -21,6 +21,10 @@ class Expression {
         this.fieldName = fieldName
     }
 
+    /**
+     * Expressionクラスが条件式のフィールド名なのか、条件となる値のどちらの役割を持つのかを判定する
+     * @return 比較される列場合true、条件となる値の場合false
+     */
     fun isFieldName(): Boolean {
         return fieldName != null
     }
@@ -33,10 +37,17 @@ class Expression {
         return fieldName ?: throw RuntimeException("null error")
     }
 
+    /**
+     * Expressionクラスが比較される列の場合、テーブルの値を返し、
+     * 条件となる値の場合はそのまま値を帰す
+     * @return 条件、あるいはテーブルの値
+     */
     fun evaluate(scan: Scan): Constant {
         return if (value != null) {
+            // Expressionクラスが検索の条件となる値の場合
             value!!
         } else if (fieldName != null) {
+            // Expressionクラス比較される列の場合、scanを通してテーブルの値を返す
             scan.getVal(fieldName!!)
         } else {
             throw RuntimeException("null error")
