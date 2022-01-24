@@ -38,16 +38,16 @@ class Expression {
     }
 
     /**
-     * Expressionクラスが比較される列の場合、テーブルの値を返し、
+     * Expressionクラスが比較される列の場合、テーブルのフィールドの値を返し、
      * 条件となる値の場合はそのまま値を帰す
-     * @return 条件、あるいはテーブルの値
+     * @return 条件、あるいはテーブルのフィールドの値
      */
     fun evaluate(scan: Scan): Constant {
         return if (value != null) {
             // Expressionクラスが検索の条件となる値の場合
             value!!
         } else if (fieldName != null) {
-            // Expressionクラス比較される列の場合、scanを通してテーブルの値を返す
+            // Expressionクラス比較される列の場合、scanを通してテーブルのフィールドの値を返す
             scan.getVal(fieldName!!)
         } else {
             throw RuntimeException("null error")
