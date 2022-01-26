@@ -28,13 +28,18 @@ class Term(
 
     /**
      * クエリプランナーのための関数
+     * 指定されたスキーマ[schema]に左右の式がフィールドとして含まれているかを判定する
+     * @return 含まれていればtrue、そうでなければfalse
      */
     fun appliesTo(schema: Schema): Boolean {
         return leftSideExpression.appliesTo(schema) && rightSideExpression.appliesTo(schema)
     }
 
     /**
-     * クエリプランナーのための関数
+     * クエリプランナーのための関数。Termクラスを条件式として
+     * 条件式によってクエリが出力するレコードの数がどの程度減少するかを計算する
+     * 例）削除係数が2の場合、条件式は出力のサイズを半分にする
+     * @return 削除係数
      */
     fun reductionFactor(plan: Plan): Int {
         val leftSideExpressionName: String
@@ -63,6 +68,9 @@ class Term(
 
     /**
      * クエリプランナーのための関数
+     * Termクラスが「F = c」（Fは渡されたフィールド名[fieldName]、cは何らかの値）の形式かを判断する
+     * 形式通りなら値を返し、そうでない場合はnullを返す
+     * @return 値かnull
      */
     fun equatesWithConstant(fieldName: String): Constant? {
         val hasOnlyLeftSideFieldName = leftSideExpression.isFieldName() &&
@@ -82,6 +90,9 @@ class Term(
 
     /**
      * クエリプランナーのための関数
+     * Termクラスが「F1 = F2」（F1は渡されたフィールド名、F2は別のフィールド）の形式かを判断する
+     * 形式通りならフィールド名を返し、そうでない場合はnullを返す
+     * @return フィールド名かnull
      */
     fun equatesWithField(fieldName: String): String? {
         val hasLeftSideFieldName = leftSideExpression.isFieldName() &&
