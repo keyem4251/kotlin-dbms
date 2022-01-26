@@ -15,16 +15,27 @@ class Term(
     private val leftSideExpression: Expression,
     private val rightSideExpression: Expression,
 ) {
+    /**
+     * 左右の値をScanクラスを通して取得し評価する
+     * 左右の値が同じならtrue、異なればfalseを返す
+     * @return 左右の値が同じならtrue、異なればfalseを返す
+     */
     fun isSatisfied(scan: Scan): Boolean {
         val leftSideExpressionValue = leftSideExpression.evaluate(scan)
         val rightSideExpressionValue = rightSideExpression.evaluate(scan)
         return rightSideExpressionValue.equals(leftSideExpressionValue)
     }
 
+    /**
+     * クエリプランナーのための関数
+     */
     fun appliesTo(schema: Schema): Boolean {
         return leftSideExpression.appliesTo(schema) && rightSideExpression.appliesTo(schema)
     }
 
+    /**
+     * クエリプランナーのための関数
+     */
     fun reductionFactor(plan: Plan): Int {
         val leftSideExpressionName: String
         val rightSideExpressionName: String
@@ -50,6 +61,9 @@ class Term(
         }
     }
 
+    /**
+     * クエリプランナーのための関数
+     */
     fun equatesWithConstant(fieldName: String): Constant? {
         val hasOnlyLeftSideFieldName = leftSideExpression.isFieldName() &&
                 leftSideExpression.asFieldName() == fieldName &&
@@ -66,6 +80,9 @@ class Term(
         }
     }
 
+    /**
+     * クエリプランナーのための関数
+     */
     fun equatesWithField(fieldName: String): String? {
         val hasLeftSideFieldName = leftSideExpression.isFieldName() &&
                 leftSideExpression.asFieldName() == fieldName &&
