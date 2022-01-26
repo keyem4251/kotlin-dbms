@@ -7,6 +7,9 @@ import simpledb.record.Schema
  * 項は2つの式を比較するためのクラス
  * 「SName = "joe" and MajorId = DId」という条件式の場合、
  *  SName、"joe"が格納されているExpressionを受け取るのがTerm
+ *
+ *  @property leftSideExpression 左の値
+ *  @property rightSideExpression 右の値
  */
 class Term(
     private val leftSideExpression: Expression,
