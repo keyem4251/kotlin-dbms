@@ -95,6 +95,22 @@ class Predicate {
 
     /**
      * クエリプランナーのための関数
+     * 「F = c」（Fは渡されたフィールド名[fieldName]、cは何らかの値）の形式のTermクラスがあるかを判断する
+     * 形式通りなら値を返し、そうでない場合はnullを返す
+     * @return 値かnull
+     */
+    fun equateWithConstant(fieldName: String): Constant? {
+        for (term in terms) {
+            val constant = term.equatesWithConstant((fieldName))
+            if (constant != null) {
+                return constant
+            }
+        }
+        return null
+    }
+
+    /**
+     * クエリプランナーのための関数
      * 「F1 = F2」（F1は渡されたフィールド名、F2は別のフィールド）の形式のTermクラスがあるかを判断する
      * 形式通りならフィールド名を返し、そうでない場合はnullを返す
      * @return フィールド名かnull
