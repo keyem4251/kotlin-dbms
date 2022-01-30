@@ -13,16 +13,29 @@ import simpledb.record.Schema
 class Predicate {
     private val terms = arrayListOf<Term>()
 
+    /**
+     * 空の条件式を作成します
+     * この場合、条件式は常にtrueを返します
+     */
     constructor() {}
 
+    /**
+     * 一つの項を含む条件式を作成します
+     */
     constructor(term: Term) {
         terms.add(term)
     }
 
+    /**
+     * 指定された条件式[predicate]と自身を結合し、まとめた条件式にする
+     */
     fun conjoinWith(predicate: Predicate) {
         terms.addAll(predicate.terms)
     }
 
+    /**
+     * 指定されたScan[scan]に関して、自身のそれぞれの項を評価して満たすtrueを返し、満たさない場合falseを返す
+     */
     fun isSatisfied(scan: Scan): Boolean {
         for (term in terms) {
             if (!term.isSatisfied(scan)) return false
@@ -30,6 +43,12 @@ class Predicate {
         return true
     }
 
+    /**
+     * クエリプランナーのための関数。Predicateクラスを条件式として
+     * 条件式によってクエリが出力するレコードの数がどの程度減少するかを計算する
+     * 例）削除係数が2の場合、条件式は出力のサイズを半分にする
+     * @return 削除係数
+     */
     fun reductionFactor(plan: Plan): Int {
         var factor = 1
         for (term in terms) {
@@ -38,6 +57,9 @@ class Predicate {
         return factor
     }
 
+    /**
+     * 指定されたスキーマ[schema]に条件式の中のフィールドが含まれていれば条件式として返す
+     */
     fun selectSubPredicate(schema: Schema): Predicate? {
         val result = Predicate()
         for (term in terms) {
@@ -50,6 +72,10 @@ class Predicate {
         }
     }
 
+    /**
+     * 指定された２つのスキーマを合わせたフィールドに合致する項を条件式として返す
+     * 個別のスキーマには対応しない
+     */
     fun joinSubPredicate(schema1: Schema, schema2: Schema): Predicate? {
         val result = Predicate()
         val newSchema = Schema()
@@ -67,6 +93,12 @@ class Predicate {
         }
     }
 
+    /**
+     * クエリプランナーのための関数
+     * 「F1 = F2」（F1は渡されたフィールド名、F2は別のフィールド）の形式のTermクラスがあるかを判断する
+     * 形式通りならフィールド名を返し、そうでない場合はnullを返す
+     * @return フィールド名かnull
+     */
     fun equatesWithField(fieldName: String): String? {
         for (term in terms) {
             val s = term.equatesWithField(fieldName)
