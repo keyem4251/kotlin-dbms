@@ -7,6 +7,8 @@ import simpledb.record.Schema
  * 条件は複数の項を受け取り項の結果を確認するクラス
  * 「SName = "joe" and MajorId = DId」という条件式の場合、
  *  (SName, "joe")というTermと(MajorId, DId)というTermを受け取り評価を行うのがPredicate
+ *  Predicateクラスは各Termクラスのメソッドを呼び出し、式を評価していきます。
+ *  引数なしとtermを受け取るパターンの2つのコンストラクタを持ちます。
  */
 class Predicate {
     private val terms = arrayListOf<Term>()
