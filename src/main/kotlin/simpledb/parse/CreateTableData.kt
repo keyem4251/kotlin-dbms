@@ -1,4 +1,8 @@
 package simpledb.parse
 
-class CreateTableData {
-}
+import simpledb.record.Schema
+
+data class CreateTableData(
+    private val tableName: String,
+    private val schema: Schema,
+)
