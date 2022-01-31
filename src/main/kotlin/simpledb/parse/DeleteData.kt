@@ -1,4 +1,8 @@
 package simpledb.parse
 
-class DeleteData {
-}
+import simpledb.query.Predicate
+
+data class DeleteData(
+    private val tableName: String,
+    private val predicate: Predicate,
+)
