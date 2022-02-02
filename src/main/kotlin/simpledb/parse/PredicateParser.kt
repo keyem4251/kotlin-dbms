@@ -1,7 +1,7 @@
 package simpledb.parse
 
 class PredicateParser(private val string: String) {
-    private var lexer: Lexer = Lexer(string)
+    private val lexer: Lexer = Lexer(string)
 
     fun field() {
         lexer.eatId()
