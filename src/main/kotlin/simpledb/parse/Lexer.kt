@@ -5,11 +5,11 @@ import java.io.StreamTokenizer
 import java.io.StringReader
 import java.util.*
 
-class Lexer {
+class Lexer(private val string: String) {
     private lateinit var keywords: MutableCollection<String>
     private lateinit var tokenizer: StreamTokenizer
 
-    constructor(string: String) {
+    init {
         initKeywords()
         tokenizer = StreamTokenizer(StringReader(string))
         tokenizer.ordinaryChar(".".toInt())
@@ -36,7 +36,7 @@ class Lexer {
         return tokenizer.ttype == StreamTokenizer.TT_WORD && tokenizer.sval.equals(word)
     }
 
-    fun matchId(): {
+    fun matchId(): Boolean{
         return tokenizer.ttype == StreamTokenizer.TT_WORD && !keywords.contains(tokenizer.sval)
     }
 
