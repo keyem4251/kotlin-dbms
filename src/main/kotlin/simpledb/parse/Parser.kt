@@ -4,6 +4,7 @@ import simpledb.query.Constant
 import simpledb.query.Expression
 import simpledb.query.Predicate
 import simpledb.query.Term
+import simpledb.record.Schema
 import java.util.*
 
 class Parser(private val string: String) {
@@ -138,5 +139,80 @@ class Parser(private val string: String) {
             mutableList.addAll(constList())
         }
         return mutableList
+    }
+
+    // Method for parsing modify commands
+    fun modify(): ModifyData {
+        lexer.eatKeyword("update")
+        val tableName = lexer.eatId()
+        lexer.eatKeyword("set")
+        val fieldName = field()
+        lexer.eatDelimiter('=')
+        val newValue = expression()
+        var predicate = Predicate()
+        if (lexer.matchKeyword("where")) {
+            lexer.eatKeyword("where")
+            predicate = predicate()
+        }
+        return ModifyData(tableName, fieldName, newValue, predicate)
+    }
+
+    // Method for parsing create table commands
+    fun createTable(): CreateTableData {
+        lexer.eatKeyword("table")
+        val tableName = lexer.eatId()
+        lexer.eatDelimiter('(')
+        val schema = fieldDefs()
+        lexer.eatDelimiter(')')
+        return CreateTableData(tableName, schema)
+    }
+
+    private fun fieldDefs(): Schema {
+        val schema = fieldDef()
+        if (lexer.matchDelimiter(',')) {
+            lexer.eatDelimiter(',')
+            val schema2 = fieldDefs()
+            schema.addAll(schema2)
+        }
+        return schema
+    }
+
+    private fun fieldDef(): Schema {
+        val fieldName = field()
+        return fieldType(fieldName)
+    }
+
+    private fun fieldType(fieldName: String): Schema {
+        val schema = Schema()
+        if (lexer.matchKeyword("int")) {
+            lexer.eatKeyword("int")
+            schema.addIntField(fieldName)
+        } else {
+            lexer.eatKeyword("varchar")
+            lexer.eatDelimiter('(')
+            val stringLength = lexer.eatIntConstant()
+            lexer.eatDelimiter(')')
+            schema.addStringField(fieldName, stringLength)
+        }
+        return schema
+    }
+
+    fun createView(): CreateViewData {
+        lexer.eatKeyword("view")
+        val viewName = lexer.eatId()
+        lexer.eatKeyword("as")
+        val queryData = query()
+        return CreateViewData(viewName, queryData)
+    }
+
+    fun createIndex(): CreateIndexData {
+        lexer.eatKeyword("index")
+        val indexName = lexer.eatId()
+        lexer.eatKeyword("on")
+        val tableName = lexer.eatId()
+        lexer.eatDelimiter('(')
+        val fieldName = field()
+        lexer.eatDelimiter(')')
+        return CreateIndexData(indexName, tableName, fieldName)
     }
 }
