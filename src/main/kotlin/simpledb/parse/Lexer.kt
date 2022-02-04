@@ -59,7 +59,8 @@ class Lexer(string: String) {
     }
 
     /**
-     * 文字列かつ、SQLの慣用句かを判定する
+     * 文字列かつ、SQLの慣用句ではないかかを判定する → フィールド名かどうか
+     * 「ID = 1」のID、「Name = "joe"」のName
      * @return 文字列かつSQLの慣用句でなければtrue、そうでなければfalse
      */
     fun matchId(): Boolean{
