@@ -7,7 +7,7 @@ import java.util.*
 
 class Lexer(private val string: String) {
     private lateinit var keywords: MutableCollection<String>
-    private lateinit var tokenizer: StreamTokenizer
+    private var tokenizer: StreamTokenizer
 
     init {
         initKeywords()
