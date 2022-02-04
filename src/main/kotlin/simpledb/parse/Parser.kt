@@ -5,7 +5,6 @@ import simpledb.query.Expression
 import simpledb.query.Predicate
 import simpledb.query.Term
 import simpledb.record.Schema
-import java.util.*
 
 class Parser(private val string: String) {
     private val lexer = Lexer(string)
