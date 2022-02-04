@@ -59,7 +59,7 @@ class Lexer(string: String) {
     }
 
     /**
-     * 文字列かつ、SQLの慣用句ではないかかを判定する → フィールド名かどうか
+     * 文字列かつ、SQLの慣用句ではないかかを判定する → フィールド名、テーブル名かどうか
      * 「ID = 1」のID、「Name = "joe"」のName
      * @return 文字列かつSQLの慣用句でなければtrue、そうでなければfalse
      */
@@ -108,6 +108,7 @@ class Lexer(string: String) {
 
     /**
      * String型かを判定しそうであれば、次の単語に字句解析を勧め、現在の単語を返す
+     * フィールド名、テーブル名
      * @return 現在の単語: String
      */
     fun eatId(): String {
