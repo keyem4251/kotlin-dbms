@@ -5,6 +5,7 @@ import simpledb.query.Expression
 import simpledb.query.Predicate
 import simpledb.query.Term
 import simpledb.record.Schema
+import java.util.*
 
 /**
  * 条件式と値を扱う5種類のメソッドに値を返すようにしたクラス
@@ -86,16 +87,28 @@ class Parser(private val string: String) {
     }
 
     // Methods for parsing the various update commands
-//    fun updateCmd(): Objects {
-//
-//    }
+    fun updateCmd(): Any {
+        if (lexer.matchKeyword("insert")) {
+            return insert()
+        } else if (lexer.matchKeyword("delete")) {
+            return delete()
+        } else if (lexer.matchKeyword("update")) {
+            return modify()
+        } else {
+            return create()
+        }
+    }
 
-//    private fun create(): Objects {
-//        lexer.eatKeyword("create")
-//        if (lexer.matchKeyword("table")) {
-//            return create
-//        }
-//    }
+    private fun create(): Any {
+        lexer.eatKeyword("create")
+        if (lexer.matchKeyword("table")) {
+            return createTable()
+        } else if (lexer.matchKeyword("view")) {
+            return createView()
+        } else {
+            return createIndex()
+        }
+    }
 
     // Methods for parsing delete commands
     fun delete(): DeleteData {
