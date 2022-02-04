@@ -16,10 +16,19 @@ class Parser(private val string: String) {
     private val lexer = Lexer(string)
 
     // Methods for parsing predicates and their components
+    /**
+     * フィールド名を解析し値を返す
+     * @return フィールド名
+     */
     fun field(): String {
         return lexer.eatId()
     }
 
+    /**
+     * フィールドの値を解析し値を返す
+     * 検索した条件式の中の行の値
+     * @return 文字列、数値
+     */
     fun constant(): Constant {
         return if (lexer.matchStringConstant()) {
             Constant(lexer.eatStringConstant())
@@ -28,6 +37,11 @@ class Parser(private val string: String) {
         }
     }
 
+    /**
+     * テーブルの列と値を解析し値を返す
+     * 「ID = 1」の「ID」という列名なのか、「1」という値なのか
+     * @return 列名、値のExpressionを返す
+     */
     fun expression(): Expression {
         return if (lexer.matchId()) {
             Expression(field())
@@ -36,6 +50,11 @@ class Parser(private val string: String) {
         }
     }
 
+    /**
+     * 条件式の中のそれぞれの項を解析し値を返す
+     * 「ID = 1」の「=」を除いた左右の値（ID、1）
+     * @return 列名と値をTermクラスとして返す
+     */
     fun term(): Term {
         val leftSideExpression = expression()
         lexer.eatDelimiter('=')
@@ -43,6 +62,10 @@ class Parser(private val string: String) {
         return Term(leftSideExpression, rightSideExpression)
     }
 
+    /**
+     * 条件式を解析し返す
+     * @return 条件式をPredicateクラスとして返す
+     */
     fun predicate(): Predicate {
         val predicate = Predicate(term())
         if (lexer.matchKeyword("and")) {
