@@ -4,8 +4,10 @@ import java.io.IOException
 import java.io.StreamTokenizer
 import java.io.StringReader
 
-
-class Lexer(private val string: String) {
+/**
+ *
+ */
+class Lexer(string: String) {
     private lateinit var keywords: MutableCollection<String>
     private var tokenizer: StreamTokenizer
 
