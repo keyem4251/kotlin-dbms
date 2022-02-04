@@ -88,25 +88,25 @@ class Parser(private val string: String) {
 
     // Methods for parsing the various update commands
     fun updateCmd(): Any {
-        if (lexer.matchKeyword("insert")) {
-            return insert()
+        return if (lexer.matchKeyword("insert")) {
+            insert()
         } else if (lexer.matchKeyword("delete")) {
-            return delete()
+            delete()
         } else if (lexer.matchKeyword("update")) {
-            return modify()
+            modify()
         } else {
-            return create()
+            create()
         }
     }
 
     private fun create(): Any {
         lexer.eatKeyword("create")
-        if (lexer.matchKeyword("table")) {
-            return createTable()
+        return if (lexer.matchKeyword("table")) {
+            createTable()
         } else if (lexer.matchKeyword("view")) {
-            return createView()
+            createView()
         } else {
-            return createIndex()
+            createIndex()
         }
     }
 
