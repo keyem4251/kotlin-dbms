@@ -6,6 +6,11 @@ import simpledb.query.Predicate
 import simpledb.query.Term
 import simpledb.record.Schema
 
+/**
+ * 条件式と値を扱う5種類のメソッドに値を返すようにしたクラス
+ * field, constant, expression, term, predicate以外のSQLの解析も行う（create, select, delete..など）
+ *
+ */
 class Parser(private val string: String) {
     private val lexer = Lexer(string)
 
