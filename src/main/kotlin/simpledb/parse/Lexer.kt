@@ -123,6 +123,7 @@ class Lexer(string: String) {
         try {
             tokenizer.nextToken()
         } catch (e: IOException) {
+            // クライアントでSQLExceptionとして扱われる
             throw BadSyntaxException()
         }
     }
