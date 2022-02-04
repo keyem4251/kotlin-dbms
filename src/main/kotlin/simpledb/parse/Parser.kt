@@ -122,6 +122,10 @@ class Parser(private val string: String) {
     }
 
     // Methods for parsing the various update commands
+    /**
+     * テーブルに対する更新処理を解析し、更新に必要な値を格納した該当するDataクラスを返す
+     * @return InsertData, DeleteData, UpdateData, CreateDataのいずれか
+     */
     fun updateCmd(): Any {
         return if (lexer.matchKeyword("insert")) {
             insert()
@@ -134,6 +138,10 @@ class Parser(private val string: String) {
         }
     }
 
+    /**
+     * createのSQLを解析し、table、view、indexのどれかを解析し作成に必要な値を格納したクラスを返す
+     * @return CreateTableData, CreateViewData, CreateIndexData
+     */
     private fun create(): Any {
         lexer.eatKeyword("create")
         return if (lexer.matchKeyword("table")) {
@@ -146,6 +154,10 @@ class Parser(private val string: String) {
     }
 
     // Methods for parsing delete commands
+    /**
+     * DeleteのSQLを解析しDeleteに必要な値をクラスに格納して返す
+     * @return DeleteDataクラス
+     */
     fun delete(): DeleteData {
         lexer.eatKeyword("delete")
         lexer.eatKeyword("from")
@@ -159,6 +171,9 @@ class Parser(private val string: String) {
     }
 
     // Methods for parsing insert commands
+    /**
+     * InsertのSQLを解析しInsertに必要な値をクラスに格納して返す
+     */
     fun insert(): InsertData {
         lexer.eatKeyword("insert")
         lexer.eatKeyword("into")
@@ -173,6 +188,10 @@ class Parser(private val string: String) {
         return InsertData(tableName, fields, values)
     }
 
+    /**
+     * insertを行うフィールド名のリストを返す
+     * @return フィールド名のリスト
+     */
     private fun fieldList(): MutableList<String> {
         val mutableList = mutableListOf<String>()
         mutableList.add(field())
@@ -183,6 +202,10 @@ class Parser(private val string: String) {
         return mutableList
     }
 
+    /**
+     * insertを行う値のリストを返す
+     * @return 値のリスト
+     */
     private fun constList(): MutableList<Constant> {
         val mutableList = mutableListOf<Constant>()
         mutableList.add(constant())
@@ -194,6 +217,9 @@ class Parser(private val string: String) {
     }
 
     // Method for parsing modify commands
+    /**
+     * UpdateのSQLを解析し、値の更新に必要な値を格納したクラスを返す
+     */
     fun modify(): ModifyData {
         lexer.eatKeyword("update")
         val tableName = lexer.eatId()
@@ -210,6 +236,9 @@ class Parser(private val string: String) {
     }
 
     // Method for parsing create table commands
+    /**
+     * テーブルをCreateするSQLを解析し、作成に必要な値を格納したクラスを返す
+     */
     fun createTable(): CreateTableData {
         lexer.eatKeyword("table")
         val tableName = lexer.eatId()
@@ -219,6 +248,9 @@ class Parser(private val string: String) {
         return CreateTableData(tableName, schema)
     }
 
+    /**
+     * SQLから列名などテーブルの構造を再帰的に解析する
+     */
     private fun fieldDefs(): Schema {
         val schema = fieldDef()
         if (lexer.matchDelimiter(',')) {
@@ -229,11 +261,17 @@ class Parser(private val string: String) {
         return schema
     }
 
+    /**
+     * フィールド名などテーブルの構造を解析する
+     */
     private fun fieldDef(): Schema {
         val fieldName = field()
         return fieldType(fieldName)
     }
 
+    /**
+     * 指定されたフィールド[fieldName]のフィールドの型を返す
+     */
     private fun fieldType(fieldName: String): Schema {
         val schema = Schema()
         if (lexer.matchKeyword("int")) {
@@ -249,6 +287,9 @@ class Parser(private val string: String) {
         return schema
     }
 
+    /**
+     * ビューをCreateするSQLを解析し、作成に必要な値を格納したクラスを返す
+     */
     fun createView(): CreateViewData {
         lexer.eatKeyword("view")
         val viewName = lexer.eatId()
@@ -257,6 +298,9 @@ class Parser(private val string: String) {
         return CreateViewData(viewName, queryData)
     }
 
+    /**
+     * インデックスをCreateするSQLを解析し、作成に必要な値を格納したクラスを返す
+     */
     fun createIndex(): CreateIndexData {
         lexer.eatKeyword("index")
         val indexName = lexer.eatId()
