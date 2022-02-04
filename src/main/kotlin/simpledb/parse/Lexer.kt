@@ -3,7 +3,7 @@ package simpledb.parse
 import java.io.IOException
 import java.io.StreamTokenizer
 import java.io.StringReader
-import java.util.*
+
 
 class Lexer(private val string: String) {
     private lateinit var keywords: MutableCollection<String>
