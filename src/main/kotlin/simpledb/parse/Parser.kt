@@ -76,6 +76,10 @@ class Parser(private val string: String) {
     }
 
     // Methods for parsing queries
+    /**
+     * SQLクエリを解析しQueryDataとして値を返す
+     * @return QueryDataクラス
+     */
     fun query(): QueryData {
         lexer.eatKeyword("select")
         val fields = selectList()
@@ -89,6 +93,10 @@ class Parser(private val string: String) {
         return QueryData(fields, tables, predicate)
     }
 
+    /**
+     * selectするフィールド名のリストを返す
+     * @return フィールド名のリスト
+     */
     private fun selectList(): MutableList<String> {
         val mutableList = mutableListOf<String>()
         mutableList.add(field())
@@ -99,6 +107,10 @@ class Parser(private val string: String) {
         return mutableList
     }
 
+    /**
+     * SQLを実行するテーブル名のリストを返す
+     * @return テーブル名のリストを返す
+     */
     private fun tableList(): MutableList<String> {
         val mutableList = mutableListOf<String>()
         mutableList.add(lexer.eatId())
