@@ -30,7 +30,7 @@ class TablePlan(
     }
 
     override fun distinctValues(fieldName: String): Int {
-        return statisticsInformation.distinctValues()
+        return statisticsInformation.distinctValues(fieldName)
     }
 
     override fun schema(): Schema {
