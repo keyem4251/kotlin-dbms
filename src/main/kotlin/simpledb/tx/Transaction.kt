@@ -25,7 +25,7 @@ class Transaction(
     private lateinit var recoveryManager: RecoveryManager
     private lateinit var concurrencyManager: ConcurrencyManager
     private var transactionNumber: Int = nextTransactionNumber()
-    private lateinit var myBuffers: BufferList
+    private var myBuffers: BufferList
 
     /**
      * recover managerとconcurrency managerを関連付けてトランザクションを作成する
