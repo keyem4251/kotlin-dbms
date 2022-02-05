@@ -13,20 +13,20 @@ import simpledb.tx.Transaction
  * 
  * システムが立ち上がり、データベースが作成されたときにクラスが作成される
  * 
- * @property max_viewdef ビュー定義を文字列で保存する
+ * @property maxViewdef ビュー定義を文字列で保存する
  */
 class ViewManager(
     private val isNew: Boolean,
-    val tableManager: TableManager,
+    private val tableManager: TableManager,
     private val transaction: Transaction,
 ) {
-    private val max_viewdef = 100
+    private val maxViewdef = 100
 
     init {
         if (isNew) {
             val schema = Schema()
             schema.addStringField("viewname", MAX_NAME)
-            schema.addStringField("viewdef", max_viewdef)
+            schema.addStringField("viewdef", maxViewdef)
             tableManager.createTable("viewcatalog", schema, transaction)
         }
     }
