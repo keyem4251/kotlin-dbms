@@ -9,7 +9,35 @@ import simpledb.record.Schema
 /**
  * 条件式と値を扱う5種類のメソッドに値を返すようにしたクラス
  * field, constant, expression, term, predicate以外のSQLの解析も行う（create, select, delete..など）
+ * <Field>          := IdToken
+ * <Constant>       := StringToken | IntToken
+ * <Expression>     := <Field> | <Constant>
+ * <Term>           := <Expression> = <Expression>
+ * <Predicate>      := <Term> [ AND <Predicate> ]
  *
+ * <Query>          := SELECT <SelectList> FROM <TableList> [ WHERE <Predicate> ]
+ * <SelectList>     := <Field> [ , <SelectList> ]
+ * <TableList>      := IdToken [ , <TableList> ]
+ *
+ * <UpdateCmd>      := <Insert> | <Delete> | <Modify> | <Create>
+ * <Create>         := <CreateTable> | <CreateView> | <CreateIndex>
+ *
+ * <Insert>         := INSERT INTO IdToken ( <FieldList> ) VALUES ( <ConstList> )
+ * <FieldList>      := <Field> [ , <FieldList> ]
+ * <ConstList>      := <Constant> [ , <ConstList> ]
+ *
+ * <Delete>         := DELETE FROM IdToken [ WHERE <Predicate> ]
+ *
+ * <Modify>         := UPDATE IdToken SET <Field> = <Expression> [ WHERE <Predicate> ]
+ *
+ * <CreateTable>    := CREATE TABLE IdToken ( <FieldDefs> )
+ * <FieldDefs>      := <FieldDef> [ , <FieldDefs> ]
+ * <FieldDef>       := IdToken <TypeDef>
+ * <TypeDef>        := INT | VARCHAR ( IntToken )
+ *
+ * <CreateView>     := CREATE VIEW IdToken AS <Query>
+ *
+ * <CreateIndex>    := CREATE INDEX IdToken ON IdToken ( <Field> )
  */
 class Parser(private val string: String) {
     private val lexer = Lexer(string)
