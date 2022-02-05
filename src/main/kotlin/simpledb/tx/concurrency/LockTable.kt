@@ -10,7 +10,7 @@ import simpledb.file.BlockId
 class LockTable {
     private val maxTime: Long = 10000
     private val locks = mutableMapOf<BlockId, Int>()
-    private val lock = java.lang.Object()
+    private val lock = Object()
 
     /**
      * 共有ロック(shared lock)
