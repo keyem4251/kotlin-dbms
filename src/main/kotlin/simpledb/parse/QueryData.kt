@@ -2,6 +2,10 @@ package simpledb.parse
 
 import simpledb.query.Predicate
 
+/**
+ * Selectを行うのに必要な値を格納するクラス
+ * <Query> := SELECT <SelectList> FROM <TableList> [ WHERE <Predicate> ]
+ */
 class QueryData(
     private val fields: List<String>,
     private val tables: Collection<String>,
