@@ -5,7 +5,6 @@ import simpledb.query.Expression
 import simpledb.query.Predicate
 import simpledb.query.Term
 import simpledb.record.Schema
-import java.util.*
 
 /**
  * 条件式と値を扱う5種類のメソッドに値を返すようにしたクラス
