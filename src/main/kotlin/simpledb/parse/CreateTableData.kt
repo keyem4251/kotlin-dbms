@@ -7,6 +7,6 @@ import simpledb.record.Schema
  * <CreateTable> := CREATE TABLE IdToken ( <FieldDefs> )
  */
 data class CreateTableData(
-    private val tableName: String,
-    private val schema: Schema,
+    val tableName: String,
+    val schema: Schema,
 )

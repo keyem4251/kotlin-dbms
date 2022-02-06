@@ -5,7 +5,7 @@ package simpledb.parse
  * <CreateIndex> := CREATE INDEX IdToken ON IdToken ( <Field> )
  */
 data class CreateIndexData(
-    private val indexName: String,
-    private val tableName: String,
-    private val fieldName: String,
+    val indexName: String,
+    val tableName: String,
+    val fieldName: String,
 )

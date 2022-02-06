@@ -5,7 +5,7 @@ package simpledb.parse
  * <CreateView> := CREATE VIEW IdToken AS <Query>
  */
 class CreateViewData(
-    private val viewName: String,
+    val viewName: String,
     private val queryData: QueryData,
 ) {
     fun viewDef(): String {

@@ -8,8 +8,8 @@ import simpledb.query.Predicate
  * <Modify> := UPDATE IdToken SET <Field> = <Expression> [ WHERE <Predicate> ]
  */
 class ModifyData(
-    private val tableName: String,
-    private val fieldName: String,
-    private val newValue: Expression,
-    private val predicate: Predicate,
+    val tableName: String,
+    val fieldName: String,
+    val newValue: Expression,
+    val predicate: Predicate,
 )

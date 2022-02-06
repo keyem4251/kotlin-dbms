@@ -7,6 +7,6 @@ import simpledb.query.Predicate
  * <Delete> := DELETE FROM IdToken [ WHERE <Predicate> ]
  */
 data class DeleteData(
-    private val tableName: String,
-    private val predicate: Predicate,
+    val tableName: String,
+    val predicate: Predicate,
 )

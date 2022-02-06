@@ -7,7 +7,7 @@ import simpledb.query.Constant
  * <Insert> := INSERT INTO IdToken ( <FieldList> ) VALUES ( <ConstList> )
  */
 data class InsertData(
-    private val tableName: String,
-    private val fields: List<String>,
-    private val values: List<Constant>,
+    val tableName: String,
+    val fields: List<String>,
+    val values: List<Constant>,
 )
