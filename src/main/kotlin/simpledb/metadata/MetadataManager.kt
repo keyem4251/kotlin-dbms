@@ -38,8 +38,8 @@ class MetadataManager(
         viewManager.createView(viewName, viewDef, tx)
     }
 
-    fun getViewDef(viewName: String, tx: Transaction): String {
-        return viewManager.getViewDef(viewName, tx) ?: throw RuntimeException("viewdef null error")
+    fun getViewDef(viewName: String, tx: Transaction): String? {
+        return viewManager.getViewDef(viewName, tx)
     }
 
     fun createIndex(indexName: String, tableName: String, fieldName: String, tx: Transaction) {

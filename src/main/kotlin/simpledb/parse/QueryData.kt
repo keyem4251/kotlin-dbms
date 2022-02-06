@@ -7,9 +7,9 @@ import simpledb.query.Predicate
  * <Query> := SELECT <SelectList> FROM <TableList> [ WHERE <Predicate> ]
  */
 class QueryData(
-    private val fields: List<String>,
-    private val tables: Collection<String>,
-    private val predicate: Predicate,
+    val fields: List<String>,
+    val tables: Collection<String>,
+    val predicate: Predicate,
 ) {
     override fun toString(): String {
         var result = "select "

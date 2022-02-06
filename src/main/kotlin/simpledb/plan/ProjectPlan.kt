@@ -6,7 +6,7 @@ import simpledb.record.Schema
 
 class ProjectPlan(
     private val plan: Plan,
-    private val fieldList: MutableList<String>,
+    private val fieldList: List<String>,
 ) : Plan {
     private val schema = Schema()
 
