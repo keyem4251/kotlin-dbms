@@ -9,9 +9,9 @@ class BasicUpdatePlanner(
     private val metadataManager: MetadataManager,
 ) : UpdatePlanner {
     override fun executeDelete(data: DeleteData, transaction: Transaction): Int {
-        val plan = TablePlan(transaction, data.tableName, metadataManager)
-        val selectPlan = SelectPlan(plan, data.predicate)
-        val updateScan = selectPlan.open() as UpdateScan
+        var plan: Plan = TablePlan(transaction, data.tableName, metadataManager)
+        plan = SelectPlan(plan, data.predicate)
+        val updateScan = plan.open() as UpdateScan
         var count = 0
         while (updateScan.next()) {
             updateScan.delete()
@@ -22,9 +22,9 @@ class BasicUpdatePlanner(
     }
 
     override fun executeModify(data: ModifyData, transaction: Transaction): Int {
-        val plan = TablePlan(transaction, data.tableName, metadataManager)
-        val selectPlan = SelectPlan(plan, data.predicate)
-        val updateScan = selectPlan.open() as UpdateScan
+        var plan: Plan = TablePlan(transaction, data.tableName, metadataManager)
+        plan = SelectPlan(plan, data.predicate)
+        val updateScan = plan.open() as UpdateScan
         var count = 0
         while (updateScan.next()) {
             val value = data.newValue.evaluate(updateScan)
@@ -36,7 +36,7 @@ class BasicUpdatePlanner(
     }
 
     override fun executeInsert(data: InsertData, transaction: Transaction): Int {
-        val plan = TablePlan(transaction, data.tableName, metadataManager)
+        val plan: Plan = TablePlan(transaction, data.tableName, metadataManager)
         val updateScan = plan.open() as UpdateScan
         updateScan.insert()
         val iterator = data.values.iterator()
