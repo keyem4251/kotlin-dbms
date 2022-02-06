@@ -1,7 +1,8 @@
-package simpledb.parse
+package simpledb.plan
 
 import simpledb.metadata.MetadataManager
-import simpledb.plan.*
+import simpledb.parse.Parser
+import simpledb.parse.QueryData
 import simpledb.tx.Transaction
 
 class BasicQueryPlanner(
