@@ -10,6 +10,9 @@ class ProjectPlan(
 ) : Plan {
     private val schema = Schema()
 
+    /**
+     * 受け取ったplanのスキーマから自身のスキーマを作成する
+     */
     init {
         for (fieldName in fieldList) {
             schema.add(fieldName, plan.schema())
