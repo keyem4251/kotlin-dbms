@@ -10,6 +10,9 @@ class ProductPlan(
 ) : Plan {
     private val schema = Schema()
 
+    /**
+     * 受け取ったplanのスキーマから自身のスキーマを作成する
+     */
     init {
         schema.addAll(plan1.schema())
         schema.addAll(plan2.schema())
