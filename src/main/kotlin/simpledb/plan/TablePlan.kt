@@ -8,6 +8,9 @@ import simpledb.record.Schema
 import simpledb.record.TableScan
 import simpledb.tx.Transaction
 
+/**
+ * 保存されたテーブルのコストをテーブルのメタデータマネージャを用いて推定する
+ */
 class TablePlan(
     private val transaction: Transaction,
     private val tableName: String,
