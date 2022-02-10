@@ -26,7 +26,7 @@ class BasicQueryPlanner(
         // Step 2: Create the product of all table plans.
         var plan = plans.removeAt(0)
         for (nextPlan in plans) {
-            val productPlan = ProductPlan(plan, nextPlan)
+            plan = ProductPlan(plan, nextPlan)
         }
 
         // Step 3: Add a selection plan for the predicate
