@@ -6,6 +6,7 @@ import simpledb.record.Schema
 /**
  * クエリツリーのコストを計算する
  * クエリで読み取られるテーブルのメタデータにアクセスし、効率のよい方法を探す
+ * クエリの関係代数（select, insert, update, delete）ごと、保存されたテーブルを扱うプランクラスがある
  */
 interface Plan {
 
