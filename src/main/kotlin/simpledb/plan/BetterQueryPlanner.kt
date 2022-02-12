@@ -7,8 +7,8 @@ import simpledb.tx.Transaction
 
 class BetterQueryPlanner(
     private val metadataManager: MetadataManager,
-) {
-    fun createPlan(data: QueryData, transaction: Transaction): Plan {
+) : QueryPlanner {
+    override fun createPlan(data: QueryData, transaction: Transaction): Plan {
         // Step 1: Create a plan for each mentioned table or view.
         val plans = mutableListOf<Plan>()
         for (tableName in data.tables) {
