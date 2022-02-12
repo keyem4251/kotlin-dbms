@@ -6,6 +6,11 @@ import simpledb.record.Schema
 
 /**
  * 複数のプランを掛け合わせたコストを見積もるクラス
+ * 複数のテーブルをまたぐ
+ * select SName from STUDENT, ENROLL, SECTION where SId = StudentId and SectionId = SectId and Grade = 'A'
+ * 上記のクエリの場合にProductのプランは以下のようになる
+ * Product1 = STUDENT, ENROLL
+ * Product2 = Product1, SECTION
  */
 class ProductPlan(
     private val plan1: Plan,
