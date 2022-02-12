@@ -5,9 +5,21 @@ import simpledb.parse.Parser
 import simpledb.parse.QueryData
 import simpledb.tx.Transaction
 
+/**
+ * Select（参照系）のSQLのためのクエリプランナー
+ */
 class BetterQueryPlanner(
     private val metadataManager: MetadataManager,
 ) : QueryPlanner {
+
+    /**
+     * 4つのステップから構成される
+     * 1. 参照するビュー、テーブルをリストにする（複数）
+     * 2. プランにしていき、複数の場合はProductPlanとして掛け合わせる
+     *    BasicQueryPlannerと比較してブロックアクセスの回数を少ない方を参照するようにProductPlanを作成する
+     * 3. 条件式を評価するためSelectPlanを呼ぶ
+     * 4. フィールドを出力するためProjectPlanを呼ぶ
+     */
     override fun createPlan(data: QueryData, transaction: Transaction): Plan {
         // Step 1: Create a plan for each mentioned table or view.
         val plans = mutableListOf<Plan>()
