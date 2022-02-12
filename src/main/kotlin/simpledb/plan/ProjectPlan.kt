@@ -6,6 +6,10 @@ import simpledb.record.Schema
 
 /**
  * 受け取ったplanで扱われているテーブルから、指定された[fieldList]フィールドを取り出すコストを見積もるクラス
+ * select SName from STUDENT, ENROLL, SECTION where SId = StudentId and SectionId = SectId and Grade = 'A'
+ * 上記の場合ProjectPlanは
+ * Project = {SName}
+ * のようにフィールドを出力する部分のコストを見積もる
  */
 class ProjectPlan(
     private val plan: Plan,
