@@ -3,6 +3,9 @@ package simpledb.plan
 import simpledb.parse.*
 import simpledb.tx.Transaction
 
+/**
+ * 更新系のクエリプランナーのインターフェイス
+ */
 interface UpdatePlanner {
     fun executeInsert(data: InsertData, transaction: Transaction): Int
 
