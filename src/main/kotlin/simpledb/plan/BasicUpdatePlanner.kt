@@ -5,6 +5,9 @@ import simpledb.parse.*
 import simpledb.query.UpdateScan
 import simpledb.tx.Transaction
 
+/**
+ * 更新系のSQLのためのクエリプランナー
+ */
 class BasicUpdatePlanner(
     private val metadataManager: MetadataManager,
 ) : UpdatePlanner {
