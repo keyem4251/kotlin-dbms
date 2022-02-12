@@ -7,6 +7,10 @@ import simpledb.record.Schema
 
 /**
  * 条件式とプランを合わせたコストを見積もるクラス
+ * select SName from STUDENT, ENROLL, SECTION where SId = StudentId and SectionId = SectId and Grade = 'A'
+ * 上記の場合SelectPlanは
+ * Select = SId = StudentId and SectionId = SectId and Grade = 'A'
+ * の条件式の部分のコストを見積もる
  */
 class SelectPlan(
     private val plan: Plan,
