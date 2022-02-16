@@ -38,7 +38,7 @@ class BTreeLeaf(
     fun delete(dataRid: RID) {
         while (next()) {
             if (getDataRid().equals(dataRid)) {
-                contents.delete()
+                contents.delete(currentSlot)
                 return
             }
         }
