@@ -45,7 +45,7 @@ class BTPage(
         return getVal(slot, "dataval")
     }
 
-    fun gteFlag(): Int {
+    fun getFlag(): Int {
         val nonNullBlock = currentBlock ?: throw RuntimeException("null error")
         return transaction.getInt(nonNullBlock, 0) ?: throw RuntimeException("null error")
     }
