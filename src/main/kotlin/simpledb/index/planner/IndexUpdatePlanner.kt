@@ -1,8 +1,7 @@
 package simpledb.index.planner
 
 import simpledb.metadata.MetadataManager
-import simpledb.parse.DeleteData
-import simpledb.parse.InsertData
+import simpledb.parse.*
 import simpledb.plan.Plan
 import simpledb.plan.SelectPlan
 import simpledb.plan.TablePlan
@@ -63,5 +62,48 @@ class IndexUpdatePlanner(
         }
         updateScan.close()
         return count
+    }
+
+    override fun executeModify(data: ModifyData, transaction: Transaction): Int {
+        val tableName = data.tableName
+        val fieldName = data.fieldName
+        var plan: Plan = TablePlan(transaction, tableName, metadataManager)
+        plan = SelectPlan(plan, data.predicate)
+        val indexInfo = metadataManager.getIndexInformation(tableName, transaction)[fieldName]
+        val index = indexInfo?.open()
+        val updateScan = plan.open() as UpdateScan
+        var count = 0
+        while (updateScan.next()) {
+            // first, update the record
+            val newValue = data.newValue.evaluate(updateScan)
+            val oldValue = updateScan.getVal(fieldName)
+            updateScan.setVal(data.fieldName, newValue)
+
+            // then update the appropriate index, if it exists
+            if (index != null) {
+                val rid = updateScan.getRid()
+                index.delete(oldValue, rid)
+                index.insert(newValue, rid)
+            }
+            count += 1
+        }
+        index?.close()
+        updateScan.close()
+        return count
+    }
+
+    override fun executeCreateTable(data: CreateTableData, transaction: Transaction): Int {
+        metadataManager.createTable(data.tableName, data.schema, transaction)
+        return 0
+    }
+
+    override fun executeCreateView(data: CreateViewData, transaction: Transaction): Int {
+        metadataManager.createView(data.viewName, data.viewDef(), transaction)
+        return 0
+    }
+
+    override fun executeCreateIndex(data: CreateIndexData, transaction: Transaction): Int {
+        metadataManager.createIndex(data.indexName, data.tableName, data.fieldName, transaction)
+        return 0
     }
 }
