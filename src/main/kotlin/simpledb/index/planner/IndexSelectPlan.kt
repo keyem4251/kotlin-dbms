@@ -29,7 +29,7 @@ class IndexSelectPlan(
     }
 
     override fun distinctValues(fieldName: String): Int {
-        return indexInfo.distinctValues()
+        return indexInfo.distinctValues(fieldName)
     }
 
     override fun schema(): Schema {
