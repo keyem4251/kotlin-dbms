@@ -5,6 +5,10 @@ import simpledb.query.Constant
 import simpledb.record.Layout
 import simpledb.tx.Transaction
 
+/**
+ * B Treeへソートされた順序で値を挿入、分割を行う
+ * B TreeのLeafのもとになるクラス
+ */
 class BTreeDir(
     private val transaction: Transaction,
     private val layout: Layout,
