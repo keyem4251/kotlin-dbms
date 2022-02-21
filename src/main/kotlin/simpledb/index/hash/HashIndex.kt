@@ -13,6 +13,7 @@ import java.lang.RuntimeException
  * bucket: インデックスのレコードの集まり -> テーブル
  * bucketの数は固定サイズ
  * 1つのインデックスに対して、複数のテーブル（バケット）が作られる
+ * インデックスのそれぞれの行はRID（ブロックの位置）とdataval（データの値）を持つ
  *
  * @property indexName: 指定されたインデックス名
  */
