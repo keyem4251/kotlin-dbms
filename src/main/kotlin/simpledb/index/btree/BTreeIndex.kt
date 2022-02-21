@@ -9,6 +9,9 @@ import simpledb.record.Schema
 import simpledb.tx.Transaction
 import kotlin.math.ln
 
+/**
+ * B Treeの操作を行うクラス
+ */
 class BTreeIndex(
     private val transaction: Transaction,
     private val indexName: String,
