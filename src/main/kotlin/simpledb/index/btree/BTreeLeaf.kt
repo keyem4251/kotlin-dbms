@@ -6,6 +6,10 @@ import simpledb.record.Layout
 import simpledb.record.RID
 import simpledb.tx.Transaction
 
+/**
+ * B Treeへソートされた順序で値を挿入、分割を行う
+ * B Treeの末端となるクラス（挿入されると分割する可能性）
+ */
 class BTreeLeaf(
     private val transaction: Transaction,
     private val layout: Layout,
