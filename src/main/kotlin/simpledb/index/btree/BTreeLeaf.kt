@@ -9,6 +9,7 @@ import simpledb.tx.Transaction
 /**
  * B Treeへソートされた順序で値を挿入、分割を行う
  * B Treeの末端となるクラス（挿入されると分割する可能性）
+ * Indexの行を持つ
  */
 class BTreeLeaf(
     private val transaction: Transaction,

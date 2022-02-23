@@ -8,6 +8,7 @@ import simpledb.tx.Transaction
 /**
  * B Treeへソートされた順序で値を挿入、分割を行う
  * B TreeのLeafのもとになるクラス
+ * インデックスの行を持つ、Leafへの参照を持つ
  */
 class BTreeDir(
     private val transaction: Transaction,
