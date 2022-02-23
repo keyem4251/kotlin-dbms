@@ -10,6 +10,11 @@ import simpledb.tx.Transaction
  * B Treeへソートされた順序で値を挿入、分割を行う
  * B Treeの末端となるクラス（挿入されると分割する可能性）
  * Indexの行を持つ
+ *
+ * @property blockId ディスクブロックへの参照
+ * @property layout B Tree leafファイルのメタデータ
+ * @property searchKey 検索キーの値
+ * @property currentSlot 初期化時に指定された検索キーが存在する場合に、キーを持つ最初のレコードの直前に現在のバッファ（スロット）を設定する
  */
 class BTreeLeaf(
     private val transaction: Transaction,
@@ -21,10 +26,18 @@ class BTreeLeaf(
     private var currentSlot = contents.findSlotBefore(searchKey)
     private val filename = blockId.filename
 
+    /**
+     * leaf pageを閉じる
+     */
     fun close() {
         contents.close()
     }
 
+    /**
+     * 先に指定された検索キーを持つ次のleafの行に移動する
+     * leafブロックの中の参照しているスロットをすすめる（BTPageのレコード数と現在のスロットを比較しながら）
+     * 該当する行がなければfalseを返す
+     */
     fun next(): Boolean {
         currentSlot += 1
         return if (currentSlot >= contents.getNumRecords()) {
@@ -36,10 +49,16 @@ class BTreeLeaf(
         }
     }
 
+    /**
+     * leafブロックの中の現在参照しているスロットの行のRIDを返す
+     */
     fun getDataRid(): RID {
         return contents.getDataRid(currentSlot)
     }
 
+    /**
+     * leafブロックの中の[dataRid]指定されたRIDを持つ行を削除する]
+     */
     fun delete(dataRid: RID) {
         while (next()) {
             if (getDataRid().equals(dataRid)) {
@@ -49,7 +68,12 @@ class BTreeLeaf(
         }
     }
 
-    fun insert(dataRid: RID): DirEntry? {
+    /**
+     * [dataRid]指定されたRIDを持ち、leafで管理しているのと同じ検索キーを持つ新しいインデックスの行を挿入する
+     * 行がこのPageと合わなければ、Pageの分割を行い新しいページに対する参照を持つdirectory entry（ノード）を返す
+     * そうでなく分割が行われなければ、nullを返す
+     */
+   fun insert(dataRid: RID): DirEntry? {
         if (contents.getFlag() >= 0 && contents.getDataVal(0).compareTo(searchKey) > 0) {
             val firstVal = contents.getDataVal(0)
             val newBlockInt = contents.split(0, contents.getFlag())
@@ -85,6 +109,11 @@ class BTreeLeaf(
         }
     }
 
+    /**
+     * leafブロックがoverflowのchainを含む可能性があるかを判断する
+     * 同じ値でridが異なるブロックの連鎖
+     * [|pat||ron|] -> [(ron,r27)] -> [(ron,r35), (ron,r59), ...]
+     */
     private fun tryOverflow(): Boolean {
         val firstKey = contents.getDataVal(0)
         val flag = contents.getFlag()
