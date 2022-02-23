@@ -167,6 +167,9 @@ class BTPage(
         return
     }
 
+    /**
+     * Page内のインデックスの行の数を返す
+     */
     fun getNumRecords(): Int {
         val nonNullBlock = currentBlock ?: throw RuntimeException("null error")
         return transaction.getInt(nonNullBlock, Integer.BYTES) ?: throw RuntimeException("null error")
