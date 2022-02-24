@@ -5,6 +5,9 @@ import simpledb.query.Constant
 import simpledb.query.Scan
 import simpledb.record.TableScan
 
+/**
+ * indexを走査する
+ */
 class IndexSelectScan(
     private val tableScan: TableScan,
     private val index: Index,

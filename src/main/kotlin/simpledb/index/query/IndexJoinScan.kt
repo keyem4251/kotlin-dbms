@@ -5,6 +5,9 @@ import simpledb.query.Constant
 import simpledb.query.Scan
 import simpledb.record.TableScan
 
+/**
+ * 2つのテーブルとjoinを行うためのフィールドをもとにindexを走査する
+ */
 class IndexJoinScan(
     private val leftSideScan: Scan,
     private val index: Index,
