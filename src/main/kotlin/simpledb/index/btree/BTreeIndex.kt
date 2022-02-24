@@ -23,8 +23,9 @@ class BTreeIndex(
     private var leaf: BTreeLeaf? = null
 
     /**
+     * leaf、directoryのそれぞれのファイルを決定する
      * schemaオブジェクトからleafを作成する
-     *
+     * その後leafから情報を取得しdirectoryを作成する
      */
     init {
         // deal with the leaves
@@ -58,6 +59,11 @@ class BTreeIndex(
         }
     }
 
+    /**
+     * directoryを探索し、[searchKey]受け取った検索キーに対応するleafブロックを探す
+     * leafブロックを開き、検索キーに該当する前の行に移動する
+     * leaf pageは開かれ、next、getDataRidメソッドで該当する行に移動、行を返す
+     */
     override fun beforeFirst(searchKey: Constant) {
         close()
         val root = BTreeDir(transaction, dirLayout, rootBlockId)
@@ -67,14 +73,26 @@ class BTreeIndex(
         leaf = BTreeLeaf(transaction, leafLayout, searchKey, leafBlockId)
     }
 
+    /**
+     * 検索キーを指定されたleaf pageを進め、次の行に移る
+     */
     override fun next(): Boolean {
         return leaf!!.next()
     }
 
+    /**
+     * 現在のleafの行からRIDを返す
+     */
     override fun getDataRid(): RID {
         return leaf!!.getDataRid()
     }
 
+    /**
+     * [dataValue]、[dataRid]受け取った値をindexに挿入する
+     * beforeFirstによりdirectoryを探索しleaf pageにinsertを行う。
+     * leaf pageが分割を行った場合、ルートdirectoryでinsertを行うことで新しいleaf pageのentryを渡す
+     * ルートdirectoryが分割される場合、makeNewRootが呼ばれる
+     */
     override fun insert(dataValue: Constant, dataRid: RID) {
         beforeFirst(dataValue)
         val entry = leaf?.insert(dataRid)
@@ -86,17 +104,28 @@ class BTreeIndex(
         root.close()
     }
 
+    /**
+     * [dataValue]、[dataRid]受け取った値をindexから削除する
+     * beforeFirstでdirectoryを探索し、leaf pageから行を削除する
+     */
     override fun delete(dataValue: Constant, dataRid: RID) {
         beforeFirst(dataValue)
         leaf?.delete(dataRid)
         leaf?.close()
     }
 
+    /**
+     * leaf pageを閉じる
+     */
     override fun close() {
         if (leaf != null) leaf?.close()
     }
 
     companion object {
+        /**
+         * [numberBlocks] B tree directoryのブロックの数、[rpb] ブロックあたりのインデックスの行の数をもとに
+         * ブロックアクセスの数を推定する
+         */
         fun searchCost(numberBlocks: Int, rpb: Int): Int {
             return 1 + (ln(numberBlocks.toDouble()) / ln(rpb.toDouble())) as Int
         }
