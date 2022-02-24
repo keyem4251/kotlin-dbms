@@ -22,12 +22,16 @@ class BTreeIndex(
     private var rootBlockId: BlockId
     private var leaf: BTreeLeaf? = null
 
+    /**
+     * schemaオブジェクトからleafを作成する
+     *
+     */
     init {
         // deal with the leaves
         leafTable = "${indexName}leaf"
         if (transaction.size(leafTable) == 0) {
-          val blockId = transaction.append(leafTable)
-          val leafNode = BTPage(transaction, blockId, leafLayout)
+            val blockId = transaction.append(leafTable)
+            val leafNode = BTPage(transaction, blockId, leafLayout)
             leafNode.format(blockId, -1)
         }
         // deal with the directory
