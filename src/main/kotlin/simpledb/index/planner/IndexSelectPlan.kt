@@ -9,7 +9,7 @@ import simpledb.record.Schema
 import simpledb.record.TableScan
 
 /**
- * IndexをSelectする場合のプラン情報を扱うクラス
+ * Selectする場合にindexを使用するプラン情報を扱うクラス
  *
  * @property plan Table Planクラス
  * @property indexInfo Indexの情報
