@@ -6,7 +6,9 @@ import simpledb.query.Scan
 import simpledb.record.TableScan
 
 /**
- * Selectを行う際にindexを走査するためのクラス
+ * Selectを行う際にindexをもとにSelect対象のテーブルを走査するためのクラス
+ *
+ * @property tableScan selec対象のテーブルのためのScan
  */
 class IndexSelectScan(
     private val tableScan: TableScan,
@@ -39,35 +41,35 @@ class IndexSelectScan(
     }
 
     /**
-     * indexの現在の行の数値を返す
+     * 現在の行の数値を返す
      */
     override fun getInt(fieldName: String): Int {
         return tableScan.getInt(fieldName)
     }
 
     /**
-     * indexの現在の行の文字列を返す
+     * 現在の行の文字列を返す
      */
     override fun getString(fieldName: String): String {
         return tableScan.getString(fieldName)
     }
 
     /**
-     * indexの現在の行のConstantの値を返す
+     * 現在の行のConstantの値を返す
      */
     override fun getVal(fieldName: String): Constant {
         return tableScan.getVal(fieldName)
     }
 
     /**
-     * indexが指定されたフィールド[fieldName]を持つかを判定する
+     * 指定されたフィールド[fieldName]を持つかを判定する
      */
     override fun hasField(fieldName: String): Boolean {
         return tableScan.hasField(fieldName)
     }
 
     /**
-     * Indexの検索を閉じる
+     * 検索を閉じる
      */
     override fun close() {
         index.close()
