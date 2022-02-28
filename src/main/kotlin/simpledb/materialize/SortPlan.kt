@@ -3,6 +3,7 @@ package simpledb.materialize
 import simpledb.plan.Plan
 import simpledb.query.Scan
 import simpledb.query.UpdateScan
+import simpledb.record.Schema
 import simpledb.tx.Transaction
 
 class SortPlan(
@@ -13,10 +14,33 @@ class SortPlan(
     private val schema = plan.schema()
     private val comparator = RecordComparator(sortFields)
 
-//    override fun open(): Scan {
-//        val srcScan: Scan = plan.open()
-//
-//    }
+    override fun open(): Scan {
+        val srcScan: Scan = plan.open()
+        var runs = splitIntoRuns(srcScan)
+        srcScan.close()
+        while (runs.size > 2) {
+           runs = doAMergeIteration(runs)
+        }
+        return SortScan(runs, comparator)
+    }
+
+    override fun blocksAccessed(): Int {
+        // does not include the one-time cost of sorting
+        val materializePlan = MaterializePlan(plan, transaction)
+        return materializePlan.blockAccessed()
+    }
+
+    override fun recordsOutput(): Int {
+        return plan.recordsOutput()
+    }
+
+    override fun distinctValues(fieldName: String): Int {
+        return plan.distinctValues(fieldName)
+    }
+
+    override fun schema(): Schema {
+        return schema
+    }
 
     private fun splitIntoRuns(srcScan: Scan): MutableList<TempTable> {
         val tempTables = mutableListOf<TempTable>()
