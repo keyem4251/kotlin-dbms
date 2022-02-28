@@ -55,7 +55,7 @@ class SortPlan(
                 currentScan.close()
                 currentTempTable = TempTable(transaction, schema)
                 tempTables.add(currentTempTable)
-                currentScan = currentTempTable.open() as UpdateScan
+                currentScan = currentTempTable.open()
             }
         }
         currentScan.close()
@@ -92,12 +92,11 @@ class SortPlan(
             } else {
                 while (hasMore2) hasMore2 = copy(srcScan2, destScan)
             }
-
-            srcScan1.close()
-            srcScan2.close()
-            destScan.close()
-            return result
         }
+        srcScan1.close()
+        srcScan2.close()
+        destScan.close()
+        return result
     }
 
     private fun copy(srcScan: Scan, destScan: UpdateScan): Boolean {
