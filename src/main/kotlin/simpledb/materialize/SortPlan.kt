@@ -21,7 +21,7 @@ class SortPlan(
         while (runs.size > 2) {
            runs = doAMergeIteration(runs)
         }
-        return SortScan(runs, comparator)
+        return SortScan(comparator, runs)
     }
 
     override fun blocksAccessed(): Int {
