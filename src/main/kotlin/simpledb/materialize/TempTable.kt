@@ -6,6 +6,13 @@ import simpledb.record.Schema
 import simpledb.record.TableScan
 import simpledb.tx.Transaction
 
+/**
+ * マテリアライズドビューのための一時テーブル
+ * temN(N = 1, 2, 3, ...)の名前で作成される
+ * - table managerのcreateTableでは作られず、TempTableのメタデータは自身の[layout]から取得する
+ * - SimpleDBの起動時にfile managerによって削除される
+ * - recovery managerでは変更は記録されない
+ */
 class TempTable(
     private val transaction: Transaction,
     private val schema: Schema,
