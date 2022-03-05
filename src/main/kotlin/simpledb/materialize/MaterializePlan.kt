@@ -35,7 +35,7 @@ class MaterializePlan(
         destScan.beforeFirst()
         return destScan
     }
-    
+
     override fun blocksAccessed(): Int {
         // create a dummy Layout object to calculate slot size
         val dummyLayout = Layout(srcPlan.schema())
