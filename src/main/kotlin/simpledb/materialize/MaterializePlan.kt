@@ -19,8 +19,8 @@ import kotlin.math.ceil
 class MaterializePlan(
     private val srcPlan: Plan,
     private val transaction: Transaction,
-) {
-    fun open(): Scan {
+) : Plan {
+    override fun open(): Scan {
         val schema = srcPlan.schema()
         val tempTable = TempTable(transaction, schema)
         val srcScan: Scan = srcPlan.open()
@@ -35,23 +35,23 @@ class MaterializePlan(
         destScan.beforeFirst()
         return destScan
     }
-
-    fun blockAccessed(): Int {
+    
+    override fun blocksAccessed(): Int {
         // create a dummy Layout object to calculate slot size
         val dummyLayout = Layout(srcPlan.schema())
         val rpb = (transaction.blockSize() / dummyLayout.slotSize()) as Double
         return ceil(srcPlan.recordsOutput() / rpb) as Int
     }
 
-    fun recordsOutput(): Int {
+    override fun recordsOutput(): Int {
         return srcPlan.recordsOutput()
     }
 
-    fun distinctValues(fieldName: String): Int {
+    override fun distinctValues(fieldName: String): Int {
         return srcPlan.distinctValues(fieldName)
     }
 
-    fun schema(): Schema {
+    override fun schema(): Schema {
         return srcPlan.schema()
     }
 }
