@@ -8,6 +8,14 @@ import simpledb.record.Schema
 import simpledb.tx.Transaction
 import kotlin.math.ceil
 
+/**
+ * 一時テーブルを用いた実行計画のコストを算出する
+ * マテリアライズを用いる部分は全体のクエリのコストを計算する前に、TempTableに書き出され、後続の処理ではすべてTempTableから読まれる
+ * T1 -> Materialize -> T2
+ * T1 -> T2の実行計画のコストを計算する際にまず、T2のMaterialize（TempTable）を作成
+ * その後T2へのアクセスは行わなずにTempTableを用いてT1 -> T2の実行計画を計算する
+ *
+ */
 class MaterializePlan(
     private val srcPlan: Plan,
     private val transaction: Transaction,
