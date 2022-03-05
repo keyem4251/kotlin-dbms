@@ -14,7 +14,7 @@ import kotlin.math.ceil
  * T1 -> Materialize -> T2
  * T1 -> T2の実行計画のコストを計算する際にまず、T2のMaterialize（TempTable）を作成
  * その後T2へのアクセスは行わなずにTempTableを用いてT1 -> T2の実行計画を計算する
- *
+ * MaterializePlanはT2のMaterialize（TempTable）の実行計画を返す
  */
 class MaterializePlan(
     private val srcPlan: Plan,
