@@ -27,7 +27,7 @@ class SortPlan(
     override fun blocksAccessed(): Int {
         // does not include the one-time cost of sorting
         val materializePlan = MaterializePlan(plan, transaction)
-        return materializePlan.blockAccessed()
+        return materializePlan.blocksAccessed()
     }
 
     override fun recordsOutput(): Int {
