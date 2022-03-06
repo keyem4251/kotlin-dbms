@@ -17,6 +17,9 @@ class SortPlan(
     private val schema = plan.schema()
     private val comparator = RecordComparator(sortFields)
 
+    /**
+     * マージソートアルゴリズムの動きをする
+     */
     override fun open(): Scan {
         val srcScan: Scan = plan.open()
         var runs = splitIntoRuns(srcScan)
@@ -45,6 +48,13 @@ class SortPlan(
         return schema
     }
 
+    /**
+     * マージソートアルゴリズムの分割部分を担当する
+     * 一時テーブルを作成し、一時テーブルからcurrentScanを作成する
+     * 入力[srcScan]を繰り返し、[copy]でcurrentScanに書き込む
+     * 新しい実行が開始されるたびにcurrentScanを閉じて、一時テーブルを作成し直す
+     * 関数の終了時には複数の一時テーブルが作られ、それぞれに1つの実行が格納される
+     */
     private fun splitIntoRuns(srcScan: Scan): MutableList<TempTable> {
         val tempTables = mutableListOf<TempTable>()
         srcScan.beforeFirst()
@@ -65,6 +75,9 @@ class SortPlan(
         return tempTables
     }
 
+    /**
+     * 一時テーブルのリストを受け取り、リスト内の一時テーブルのペアごとにmergeTwoRunsを呼び出し、マージの結果をresultに格納する
+     */
     private fun doAMergeIteration(runs: MutableList<TempTable>): MutableList<TempTable> {
         val result = mutableListOf<TempTable>()
         while (runs.size > 1) {
