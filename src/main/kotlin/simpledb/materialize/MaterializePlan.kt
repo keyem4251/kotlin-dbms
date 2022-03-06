@@ -20,6 +20,9 @@ class MaterializePlan(
     private val srcPlan: Plan,
     private val transaction: Transaction,
 ) : Plan {
+    /**
+     * 元になるプラン[srcPlan](T2)から一時テーブルを作成し、Materialize用のScanを返す
+     */
     override fun open(): Scan {
         val schema = srcPlan.schema()
         val tempTable = TempTable(transaction, schema)
@@ -36,6 +39,10 @@ class MaterializePlan(
         return destScan
     }
 
+    /**
+     * 一時テーブルのブロックアクセスの回数を推定し返す
+     * TempTableを作るための前処理のコストは計算しない
+     */
     override fun blocksAccessed(): Int {
         // create a dummy Layout object to calculate slot size
         val dummyLayout = Layout(srcPlan.schema())
@@ -43,14 +50,23 @@ class MaterializePlan(
         return ceil(srcPlan.recordsOutput() / rpb) as Int
     }
 
+    /**
+     * 一時テーブルの行数を返す
+     */
     override fun recordsOutput(): Int {
         return srcPlan.recordsOutput()
     }
 
+    /**
+     * 一時テーブルの行のばらつきを返す
+     */
     override fun distinctValues(fieldName: String): Int {
         return srcPlan.distinctValues(fieldName)
     }
 
+    /**
+     * 一時テーブルのスキーマを返す
+     */
     override fun schema(): Schema {
         return srcPlan.schema()
     }
