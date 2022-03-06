@@ -5,6 +5,9 @@ import simpledb.query.Scan
 import simpledb.query.UpdateScan
 import simpledb.record.RID
 
+/**
+ * マージソートを行うScan
+ */
 class SortScan(
     private val comparator: RecordComparator,
     private val runs: MutableList<TempTable>,

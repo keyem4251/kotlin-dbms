@@ -6,6 +6,9 @@ import simpledb.query.UpdateScan
 import simpledb.record.Schema
 import simpledb.tx.Transaction
 
+/**
+ * マージソートを行うプラン
+ */
 class SortPlan(
     private val plan: Plan,
     private val transaction: Transaction,
