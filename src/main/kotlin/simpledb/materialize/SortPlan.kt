@@ -89,6 +89,9 @@ class SortPlan(
         return result
     }
 
+    /**
+     * 受け取った2つのテーブルをマージして、その結果をresultに書き込み返す
+     */
     private fun mergeTwoRuns(tempTable1: TempTable, tempTable2: TempTable): TempTable {
         val srcScan1: Scan = tempTable1.open()
         val srcScan2: Scan = tempTable2.open()
@@ -115,6 +118,9 @@ class SortPlan(
         return result
     }
 
+    /**
+     * [srcScan]の内容を[destScan]に書き込む
+     */
     private fun copy(srcScan: Scan, destScan: UpdateScan): Boolean {
         destScan.insert()
         for (fieldName in schema.fields) {
