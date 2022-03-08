@@ -31,7 +31,7 @@ class SortPlan(
     }
 
     override fun blocksAccessed(): Int {
-        // does not include the one-time cost of sorting
+        // 一時テーブルを作るための前処理のコストは計算しなし
         val materializePlan = MaterializePlan(plan, transaction)
         return materializePlan.blocksAccessed()
     }
@@ -64,7 +64,7 @@ class SortPlan(
         var currentScan: UpdateScan = currentTempTable.open()
         while (copy(srcScan, currentScan)) {
             if (comparator.compare(srcScan, currentScan) < 0) {
-                // start a new run
+                // 新しいrunを開始する
                 currentScan.close()
                 currentTempTable = TempTable(transaction, schema)
                 tempTables.add(currentTempTable)
