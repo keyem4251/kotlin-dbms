@@ -37,16 +37,25 @@ class SortPlan(
         return SortScan(comparator, runs)
     }
 
+    /**
+     * ソートされたテーブルのブロック数を推定し返す
+     */
     override fun blocksAccessed(): Int {
         // 一時テーブルを作るための前処理のコストは計算しなし
         val materializePlan = MaterializePlan(plan, transaction)
         return materializePlan.blocksAccessed()
     }
 
+    /**
+     * ソートされたテーブルのレコード数を推定し返す
+     */
     override fun recordsOutput(): Int {
         return plan.recordsOutput()
     }
 
+    /**
+     * ソートされたテーブルのレコードのばらつきを推定し返す
+     */
     override fun distinctValues(fieldName: String): Int {
         return plan.distinctValues(fieldName)
     }
