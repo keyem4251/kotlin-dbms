@@ -25,6 +25,7 @@ class SortPlan(
 
     /**
      * マージソートアルゴリズムの動きをする
+     * ソートされた複数の一時テーブルに分割し、それぞれの一時テーブルをマージしていく
      */
     override fun open(): Scan {
         val srcScan: Scan = plan.open()
