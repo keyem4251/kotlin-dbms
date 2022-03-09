@@ -7,6 +7,7 @@ import simpledb.record.RID
 
 /**
  * マージソートを行うScan
+ * @property runs 1あるいは2つのソートされた集合
  */
 class SortScan(
     private val comparator: RecordComparator,
@@ -19,6 +20,10 @@ class SortScan(
     private var hasMore2 = false
     private lateinit var savedPosition: List<RID>
 
+    /**
+     * runsが1つの場合はscan2はnull、hasMore2はfalseになる
+     *
+     */
     init {
         if (runs.size > 1) {
             scan2 = runs[1].open()
@@ -26,6 +31,10 @@ class SortScan(
         }
     }
 
+    /**
+     * ソートされた最初のレコードの前に移動する
+     * currentScanはnullの状態、内部的なrunsに格納されているテーブルをすすめる
+     */
     override fun beforeFirst() {
         scan1.beforeFirst()
         hasMore1 = scan1.next()
@@ -35,6 +44,12 @@ class SortScan(
         }
     }
 
+    /**
+     * ソートされている次のレコードに移動する
+     * 現在のscanを次のレコードに移動する（currentScanに該当するscan1 or sca2をnextですすめる）
+     * sca1、scan2のうち小さい値のレコードをもっている方をcurrentScanに設定する
+     *
+     */
     override fun next(): Boolean {
         if (currentScan == scan1) {
             hasMore1 = scan1.next()
@@ -81,12 +96,18 @@ class SortScan(
         return currentScan?.hasField(fieldName) ?: throw RuntimeException("null error")
     }
 
+    /**
+     * 復元用に現在のレコードの位置を保存する
+     */
     fun savePosition() {
         val rid1 = scan1.getRid()
         val rid2 = scan2?.getRid() ?: throw RuntimeException("null error")
         savedPosition = listOf(rid1, rid2)
     }
 
+    /**
+     * 保存されているレコードの位置に移動する
+     */
     fun restorePosition() {
         val rid1 = savedPosition[0]
         val rid2 = savedPosition[1]
