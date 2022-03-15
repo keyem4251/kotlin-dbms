@@ -3,6 +3,12 @@ package simpledb.materialize
 import simpledb.query.Constant
 import simpledb.query.Scan
 
+/**
+ * 現在のグループを保持する
+ *
+ * @property scan sort scan
+ * @property fields グルーピングを行うフィールド
+ */
 class GroupValue(
     private val scan: Scan,
     private val fields: List<String>,
@@ -19,6 +25,9 @@ class GroupValue(
         return values[fieldName] ?: throw RuntimeException("null error")
     }
 
+    /**
+     * 2つのGroup Valueが持つフィールドの値が同じかを判定する
+     */
     override fun equals(other: Any?): Boolean {
         if (other == null) return false
         val groupValue = other as GroupValue
