@@ -70,6 +70,14 @@ abstract class ResultSetAdapter: ResultSet {
         throw SQLException("operation not implemented")
     }
 
+    override fun getBigDecimal(columnIndex: Int, scale: Int): BigDecimal {
+        throw SQLException("operation not implemented")
+    }
+
+    override fun getBigDecimal(columnLabel: String?, scale: Int): BigDecimal {
+        throw SQLException("operation not implemented")
+    }
+
     override fun getBinaryStream(columnIndex: Int): InputStream {
         throw SQLException("operation not implemented")
     }
@@ -327,6 +335,14 @@ abstract class ResultSetAdapter: ResultSet {
     }
 
     override fun getType(): Int {
+        throw SQLException("operation not implemented")
+    }
+
+    override fun getUnicodeStream(columnIndex: Int): InputStream {
+        throw SQLException("operation not implemented")
+    }
+
+    override fun getUnicodeStream(columnLabel: String?): InputStream {
         throw SQLException("operation not implemented")
     }
 
