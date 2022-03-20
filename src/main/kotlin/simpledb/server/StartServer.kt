@@ -2,7 +2,7 @@ package simpledb.server
 
 import java.rmi.registry.LocateRegistry
 
-// TODO simpleijでembdeddriverで書き換え
+// TODO simleij
 fun main(args: Array<String>) {
     // configure and initialize the database
     val directoryName = if (args.size === 0) {
