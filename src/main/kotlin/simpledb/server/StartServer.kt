@@ -23,6 +23,7 @@ fun main(args: Array<String>) {
                 doQuery(statement, cmd)
             } else {
                 // do update query
+                doUpdate(statement, cmd)
             }
             print("\nSQL> ")
         }
