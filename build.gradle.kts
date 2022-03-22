@@ -13,12 +13,8 @@ repositories {
 }
 
 dependencies {
-//    testImplementation(kotlin("test"))
+    implementation("junit:junit:4.13.1")
 }
-
-//tasks.test {
-//    useJUnit()
-//}
 
 tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "11"
