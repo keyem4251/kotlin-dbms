@@ -24,7 +24,7 @@ class TableScan(
     private val tableName: String,
     private val layout: Layout,
 ) : UpdateScan {
-    private lateinit var recordPage: RecordPage
+    private var recordPage: RecordPage? = null
     private var fileName: String = ""
     private var currentSlot: Int = 0
 
@@ -47,7 +47,7 @@ class TableScan(
      * 新しいブロックをデータ操作の対象とする（ロックがかかるため）
      */
     override fun close() {
-        transaction.unpin(recordPage.blockId)
+        if (recordPage != null) transaction.unpin(recordPage!!.blockId)
     }
 
     /**
@@ -64,12 +64,12 @@ class TableScan(
      * @return ファイル末尾に到達した場合 false、次のレコードが見つかった場合 true
      */
     override fun next(): Boolean {
-        currentSlot = recordPage.nextAfter(currentSlot)
+        currentSlot = recordPage!!.nextAfter(currentSlot)
         while (currentSlot < 0) {
             // 現在のrecordPageに次のレコードがない場合
             if (atLastBlock()) return false // ファイル末尾に到達
-            moveToBlock(recordPage.blockId.number+1)
-            currentSlot = recordPage.nextAfter(currentSlot)
+            moveToBlock(recordPage!!.blockId.number+1)
+            currentSlot = recordPage!!.nextAfter(currentSlot)
         }
         return true
     }
@@ -79,7 +79,7 @@ class TableScan(
      * @return 数値
      */
     override fun getInt(fieldName: String): Int {
-        return recordPage.getInt(currentSlot, fieldName)
+        return recordPage!!.getInt(currentSlot, fieldName)
     }
 
     /**
@@ -87,7 +87,7 @@ class TableScan(
      * @return 文字列
      */
     override fun getString(fieldName: String): String {
-        return recordPage.getString(currentSlot, fieldName)
+        return recordPage!!.getString(currentSlot, fieldName)
     }
 
     /**
@@ -115,14 +115,14 @@ class TableScan(
      * [fieldName]指定したフィールド名、[value]値を現在のスロットに瀬底する
      */
     override fun setInt(fieldName: String, value: Int) {
-        recordPage.setInt(currentSlot, fieldName, value)
+        recordPage!!.setInt(currentSlot, fieldName, value)
     }
 
     /**
      * [fieldName]指定したフィールド名、[value]値を現在のスロットに瀬底する
      */
     override fun setString(fieldName: String, value: String) {
-        recordPage.setString(currentSlot, fieldName, value)
+        recordPage!!.setString(currentSlot, fieldName, value)
     }
 
     /**
@@ -143,7 +143,7 @@ class TableScan(
      * なければ新しいブロック（recordPage）を確保する
      */
     override fun insert() {
-        currentSlot = recordPage.insertAfter(currentSlot)
+        currentSlot = recordPage!!.insertAfter(currentSlot)
         while (currentSlot < 0) {
             // 次のスロットが空いてない場合
             if (atLastBlock()) {
@@ -151,9 +151,9 @@ class TableScan(
                 moveToNewBlock()
             } else {
                 // 現在のrecordPageの次のブロックへ
-                moveToBlock(recordPage.blockId.number+1)
+                moveToBlock(recordPage!!.blockId.number+1)
             }
-            currentSlot = recordPage.insertAfter(currentSlot)
+            currentSlot = recordPage!!.insertAfter(currentSlot)
         }
     }
 
@@ -161,7 +161,7 @@ class TableScan(
      * 現在のスロットを削除する（スロットの状態を空にする）
      */
     override fun delete() {
-        recordPage.delete(currentSlot)
+        recordPage!!.delete(currentSlot)
     }
 
     /**
@@ -179,7 +179,7 @@ class TableScan(
      * @return レコードID
      */
     override fun getRid(): RID {
-        return RID(recordPage.blockId.number, currentSlot)
+        return RID(recordPage!!.blockId.number, currentSlot)
     }
 
     /**
@@ -201,7 +201,7 @@ class TableScan(
         close()
         val blockId = transaction.append(fileName)
         recordPage = RecordPage(transaction, blockId, layout)
-        recordPage.format()
+        recordPage!!.format()
         currentSlot = -1
     }
 
@@ -210,6 +210,6 @@ class TableScan(
      * @return RecordPageのブロック末尾ならtrue
      */
     private fun atLastBlock(): Boolean {
-        return recordPage.blockId.number == (transaction.size(fileName) - 1)
+        return recordPage!!.blockId.number == (transaction.size(fileName) - 1)
     }
 }
