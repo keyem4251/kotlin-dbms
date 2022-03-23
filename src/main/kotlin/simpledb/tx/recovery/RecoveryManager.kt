@@ -64,7 +64,7 @@ class RecoveryManager(
      */
     fun setInt(buffer: Buffer, offset: Int): Int {
         val oldValue = buffer.contents().getInt(offset)
-        val blockId = buffer.blockId()
+        val blockId = buffer.blockId() ?: throw RuntimeException("null error")
         // TODO: setIntRecordにセットする値は新しい値？
         return SetIntRecord.writeToLog(logManager, transactionNumber, blockId, offset, oldValue)
     }
@@ -75,7 +75,7 @@ class RecoveryManager(
      */
     fun setString(buffer: Buffer, offset: Int): Int {
         val oldValue = buffer.contents().getString(offset)
-        val blockId = buffer.blockId()
+        val blockId = buffer.blockId() ?: throw RuntimeException("null error")
         // TODO: setStringRecordにセットする値は新しい値？
         return SetStringRecord.writeToLog(logManager, transactionNumber, blockId, offset, oldValue)
     }
