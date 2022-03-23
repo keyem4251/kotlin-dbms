@@ -2,3 +2,4 @@
 .idea
 build
 testdata
+jdbc:simpledb:studentdb
