@@ -67,7 +67,7 @@ class TableManager(
         for (fieldName in schema.fields) {
             fieldCatalog.insert()
             fieldCatalog.setString("tablename", tableName)
-            fieldCatalog.setString("fieldname", tableName)
+            fieldCatalog.setString("fieldname", fieldName)
             val schemaType = schema.type(fieldName) ?: throw RuntimeException("null schema type")
             fieldCatalog.setInt("type", schemaType)
             val schemaLength = schema.length(fieldName) ?: throw RuntimeException("null schema type")
