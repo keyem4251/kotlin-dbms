@@ -25,7 +25,7 @@ class Buffer(
     val lm: LogManager,
 ) {
     private var contents: Page = Page(fm.blockSize)
-    private lateinit var blockId: BlockId
+    private var blockId: BlockId? = null
     private var pins = 0
     private var txnum = -1
     private var lsn = -1
@@ -34,7 +34,7 @@ class Buffer(
         return contents
     }
 
-    fun blockId(): BlockId {
+    fun blockId(): BlockId? {
         return blockId
     }
 
@@ -64,7 +64,7 @@ class Buffer(
     fun assignToBlock(b: BlockId) {
         flush()
         blockId = b
-        fm.read(blockId, contents)
+        fm.read(blockId!!, contents)
         pins = 0
     }
 
@@ -77,7 +77,7 @@ class Buffer(
     fun flush() {
         if (txnum >= 0) {
             lm.flush(lsn)
-            fm.write(blockId, contents)
+            fm.write(blockId!!, contents)
             txnum = -1
         }
     }
