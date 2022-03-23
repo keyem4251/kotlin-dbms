@@ -8,7 +8,7 @@ import simpledb.server.SimpleDB
 class TableManagerTest {
     @Test
     fun testTableManager() {
-        val db = SimpleDB("test/tablemanagertest", 400, 8)
+        val db = SimpleDB("testdata/tablemanagertest", 400, 8)
         val transaction = db.newTransaction()
         val tableManager = TableManager(true, transaction)
 

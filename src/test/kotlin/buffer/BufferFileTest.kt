@@ -8,7 +8,7 @@ import simpledb.server.SimpleDB
 class BufferFileTest {
     @Test
     fun testBufferFile() {
-        val db = SimpleDB("bufferfiletest", 400, 8)
+        val db = SimpleDB("testdata/bufferfiletest", 400, 8)
         val bufferManager = db.bufferManager
         val blockId = BlockId("testfile", 2)
         val pos1 = 80

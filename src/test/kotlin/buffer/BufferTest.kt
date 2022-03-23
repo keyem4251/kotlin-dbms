@@ -7,7 +7,7 @@ import simpledb.server.SimpleDB
 class BufferTest {
     @Test
     fun testBuffer() {
-        val db = SimpleDB("buffertest", 400, 3)
+        val db = SimpleDB("testdata/buffertest", 400, 3)
         val bufferManager = db.bufferManager
 
         val buffer1 = bufferManager.pin(BlockId("testfile", 1))
