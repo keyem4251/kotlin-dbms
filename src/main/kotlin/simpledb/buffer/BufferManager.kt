@@ -20,14 +20,14 @@ class BufferManager(
     val lm: LogManager,
     var numBuffers: Int,
 ) {
-    private lateinit var bufferPool: Array<Buffer>
+    private val bufferPool: MutableList<Buffer> = mutableListOf<Buffer>()
     private var numAvailable = numBuffers
     private val MAX_TIME: Long = 10000 // 10 seconds
     private val lock = java.lang.Object()
 
     init {
         for (i in 0..numBuffers) {
-            bufferPool[i] = Buffer(fm, lm)
+            bufferPool.add(i, Buffer(fm, lm))
         }
     }
 
