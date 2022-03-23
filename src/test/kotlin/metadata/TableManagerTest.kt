@@ -1,0 +1,4 @@
+package metadata
+
+class TableManagerTest {
+}
