@@ -21,7 +21,7 @@ class FileManager(
     val blockSize: Int,
 ) {
     var isNew: Boolean = !dbDirectory.exists()
-    lateinit var openFiles: MutableMap<String, RandomAccessFile>
+    private val openFiles: MutableMap<String, RandomAccessFile> = mutableMapOf<String, RandomAccessFile>()
 
     /**
      * 初期化処理
