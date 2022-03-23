@@ -22,8 +22,8 @@ class Transaction(
     val logManager: LogManager,
 ) {
     private val enfOfFile = -1
-    private lateinit var recoveryManager: RecoveryManager
-    private lateinit var concurrencyManager: ConcurrencyManager
+    private var recoveryManager: RecoveryManager
+    private var concurrencyManager: ConcurrencyManager
     private var transactionNumber: Int = nextTransactionNumber()
     private var myBuffers: BufferList
 
@@ -33,8 +33,8 @@ class Transaction(
      * ファイル、ログ、バッファーマネージャーのオブジェクトはシステムの初期化時に作成される
      */
     init {
-        val recoveryManager = RecoveryManager(this, transactionNumber, logManager, bufferManager)
-        val concurrencyManager = ConcurrencyManager()
+        recoveryManager = RecoveryManager(this, transactionNumber, logManager, bufferManager)
+        concurrencyManager = ConcurrencyManager()
         myBuffers = BufferList(bufferManager)
     }
 
