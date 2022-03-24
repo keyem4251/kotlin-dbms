@@ -10,7 +10,7 @@ fun main(args: Array<String>) {
     val connectionString = scanner.nextLine()
     val driver = EmbeddedDriver()
     try {
-        val connection = driver.connect(connectionString.replace(":", "\\/"), null)
+        val connection = driver.connect(connectionString.replace(":", "/"), null)
         val statement = connection.createStatement()
         print("\nSQL> ")
         while (scanner.hasNextLine()) {
@@ -57,19 +57,28 @@ private fun doQuery(statement: Statement, cmd: String) {
         println()
 
         // print records
-        for (i in 1..columnCount) {
-            val fieldName = metaData.getColumnName(i)
-            val fieldType = metaData.getColumnType(i)
-            val fmt = metaData.getColumnDisplaySize(i)
-            if (fieldType == java.sql.Types.INTEGER) {
-                val intValue = resultSet.getInt(fieldName)
-                print("$fmt$intValue")
-            } else {
-                val intString = resultSet.getString(fieldName)
-                print("$fmt$intString")
+        while (resultSet.next()) {
+            for (i in 1..columnCount) {
+                val fieldName = metaData.getColumnName(i)
+                val fieldType = metaData.getColumnType(i)
+                val width = metaData.getColumnDisplaySize(i)
+                val space = StringBuilder()
+                if (fieldType == java.sql.Types.INTEGER) {
+                    val intValue = resultSet.getInt(fieldName)
+                    for (j in 1..(width+(fieldName.length-intValue.toString().length))) {
+                        space.append(" ")
+                    }
+                    print("$space$intValue")
+                } else {
+                    val intString = resultSet.getString(fieldName)
+                    for (j in 1..(width+(fieldName.length-intString.length))) {
+                        space.append(" ")
+                    }
+                    print("$space$intString")
+                }
             }
+            println()
         }
-        println()
     } catch (e: SQLException) {
         println("SQL Exception: ${e.message}")
     }
