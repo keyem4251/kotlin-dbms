@@ -5,7 +5,7 @@ import java.sql.SQLException
 
 fun main(args: Array<String>) {
     val driver = EmbeddedDriver()
-    val url = "jdbc:simpledb:studentdb"
+    val url = "jdbc/simpledb/studentdb"
 
     try {
         val connection = driver.connect(url, null)
