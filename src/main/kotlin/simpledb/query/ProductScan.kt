@@ -13,7 +13,7 @@ class ProductScan(
     private val scan2: Scan,
 ): Scan {
     init {
-        scan1.next()
+        beforeFirst()
     }
 
     override fun beforeFirst() {
