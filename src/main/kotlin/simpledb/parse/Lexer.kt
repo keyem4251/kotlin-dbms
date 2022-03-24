@@ -19,8 +19,8 @@ class Lexer(string: String) {
     init {
         initKeywords()
         tokenizer = StreamTokenizer(StringReader(string))
-        tokenizer.ordinaryChar(".".toInt())
-        tokenizer.wordChars("_".toInt(), "_".toInt())
+        tokenizer.ordinaryChar('.'.code)
+        tokenizer.wordChars('_'.code, '_'.code)
         tokenizer.lowerCaseMode(true)
         nextToken()
     }
@@ -31,7 +31,7 @@ class Lexer(string: String) {
      * @return 区切り記号ならtrue、そうでなければfalse
      */
     fun matchDelimiter(delimiter: Char): Boolean {
-        return delimiter == tokenizer.ttype as Char
+        return delimiter == (tokenizer.ttype.toChar())
     }
 
     /**
@@ -47,7 +47,7 @@ class Lexer(string: String) {
      * @return 文字列ならtrue、そうでなければfalse
      */
     fun matchStringConstant(): Boolean {
-        return '\'' == tokenizer.ttype as Char
+        return '\'' == tokenizer.ttype.toChar()
     }
 
     /**
@@ -82,7 +82,7 @@ class Lexer(string: String) {
      */
     fun eatIntConstant(): Int {
         if (!matchIntConstant()) throw BadSyntaxException()
-        val i = tokenizer.nval as Int
+        val i = tokenizer.nval.toInt()
         nextToken()
         return i
     }
