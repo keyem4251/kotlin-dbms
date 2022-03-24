@@ -30,6 +30,7 @@ class EmbeddedStatement(
             connection.commit()
             return result
         } catch (e: RuntimeException) {
+            println(e)
             connection.rollback()
             throw SQLException(e)
         }
