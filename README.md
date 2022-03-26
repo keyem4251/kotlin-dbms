@@ -2,7 +2,7 @@
 Implementing a database management system using kotlin.  
 With reference to [Database Design and Implementation](https://www.amazon.com/dp/3030338355/).
 
-# Demo
+# Content
 
 Simpledb is a database engine that can handle a subset of SQL.
 This database use only Int and String Type.  
@@ -21,7 +21,7 @@ Don't implement Remote JDBC interface in [Database Design and Implementation](ht
 Only implement Embedded JDBC interface.
 
 # Getting Started
-Using Intellij  
+Using IntelliJ  
 Set up data
 
 
