@@ -23,7 +23,7 @@ Only implement Embedded JDBC interface.
 # Getting Started
 Using IntelliJ  
 ## Set up data
-https://user-images.githubusercontent.com/53423344/160231224-3bb83df8-6a62-4f64-9bce-ec2210ee664f.mov
+https://user-images.githubusercontent.com/53423344/160232120-e0013c3e-f3c1-41c3-a733-77cbaf981689.mp4
 
 ## Run Server
-
+https://user-images.githubusercontent.com/53423344/160232133-1e9ac9e4-c1dc-40f4-a427-9f0aeae682fd.mp4
