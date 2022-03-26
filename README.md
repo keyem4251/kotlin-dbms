@@ -22,11 +22,8 @@ Only implement Embedded JDBC interface.
 
 # Getting Started
 Using IntelliJ  
-Set up data
-
-
+## Set up data
 https://user-images.githubusercontent.com/53423344/160231224-3bb83df8-6a62-4f64-9bce-ec2210ee664f.mov
 
+## Run Server
 
-
-Run Server
